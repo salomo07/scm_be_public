@@ -1,0 +1,135 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0" version="24.7.7">
+  <diagram name="Page-1" id="uOEHEu8lCBgJoNqLE10o">
+    <mxGraphModel dx="910" dy="471" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="NHz0bLsr8eyzy1d1SoRF-2" target="NHz0bLsr8eyzy1d1SoRF-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-2" value="Submit Register Company" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="160" y="80" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-3" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jettySize=auto;orthogonalLoop=1;fontSize=11;endArrow=block;endFill=0;endSize=8;strokeWidth=1;shadow=0;labelBackgroundColor=none;" edge="1" parent="1" source="NHz0bLsr8eyzy1d1SoRF-5" target="NHz0bLsr8eyzy1d1SoRF-6">
+          <mxGeometry y="10" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="NHz0bLsr8eyzy1d1SoRF-5" target="NHz0bLsr8eyzy1d1SoRF-17">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-5" value="Mandatory terisi?" style="rhombus;whiteSpace=wrap;html=1;shadow=0;fontFamily=Helvetica;fontSize=12;align=center;strokeWidth=1;spacing=6;spacingTop=-4;" vertex="1" parent="1">
+          <mxGeometry x="170" y="140" width="100" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-6" value="400,Field cannot be empty" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="310" y="160" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-51" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="NHz0bLsr8eyzy1d1SoRF-12" target="NHz0bLsr8eyzy1d1SoRF-50">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-12" value="Create UserDB&lt;br&gt;(credential dari DB baru)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="677" y="289.5" width="133" height="59" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="NHz0bLsr8eyzy1d1SoRF-14" target="NHz0bLsr8eyzy1d1SoRF-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-14" value="Start" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="180" y="20" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-15" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="NHz0bLsr8eyzy1d1SoRF-17" target="NHz0bLsr8eyzy1d1SoRF-20">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="320" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="NHz0bLsr8eyzy1d1SoRF-17">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="220" y="420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-17" value="&lt;br&gt;&lt;div&gt;Check &quot;alias&quot; &amp;amp; &quot;appid&quot;&lt;/div&gt;ditemukan?" style="rhombus;whiteSpace=wrap;html=1;shadow=0;fontFamily=Helvetica;fontSize=12;align=center;strokeWidth=1;spacing=6;spacingTop=-4;" vertex="1" parent="1">
+          <mxGeometry x="145" y="249" width="150" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-18" value="Yes" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="230" y="220" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="NHz0bLsr8eyzy1d1SoRF-20">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="510" y="319" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-20" value="Insert data company ke coll &quot;companies&quot;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="350" y="288.5" width="120" height="61" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-21" value="No" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="310" y="299" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-22" value="Yes" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="610" y="299" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-43" value="Register Company" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=42;fontFamily=Comic Sans MS;fontColor=#ff0000;" vertex="1" parent="1">
+          <mxGeometry x="687" y="150" width="100" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-44" value="Yes" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="210" y="389" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-45" value="400,Company has been registered" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="160" y="420" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-49" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="NHz0bLsr8eyzy1d1SoRF-46" target="NHz0bLsr8eyzy1d1SoRF-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-46" value="Create Company DB&lt;br&gt;&quot;c_xxxxxxx&quot;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="510" y="299" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-56" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="NHz0bLsr8eyzy1d1SoRF-50" target="NHz0bLsr8eyzy1d1SoRF-53">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-50" value="Generate JWT&lt;br&gt;(untuk token dari company)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="850" y="289.5" width="150" height="59" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-55" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="NHz0bLsr8eyzy1d1SoRF-53" target="NHz0bLsr8eyzy1d1SoRF-54">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-53" value="Insert data user Administrator ke &quot;scm_core&quot;-&amp;gt;&quot;users&quot; " style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="350" y="390" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-58" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="NHz0bLsr8eyzy1d1SoRF-54" target="NHz0bLsr8eyzy1d1SoRF-57">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-54" value="Insert data user Administrator ke &quot;c_xxxxxxx&quot;-&amp;gt;&quot;users&quot; " style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="390" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-60" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="NHz0bLsr8eyzy1d1SoRF-57" target="NHz0bLsr8eyzy1d1SoRF-59">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-57" value="Encrypt credential dari DB baru" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="683.5" y="390" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-62" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="NHz0bLsr8eyzy1d1SoRF-59" target="NHz0bLsr8eyzy1d1SoRF-61">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-59" value="Insert data role &quot;adm&quot; ke &quot;c_xxxxxxx&quot;-&amp;gt;&quot;role&quot;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="850" y="390" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-65" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="NHz0bLsr8eyzy1d1SoRF-61" target="NHz0bLsr8eyzy1d1SoRF-64">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-61" value="Update / Tambahkan field &quot;cred&quot; di &quot;scm_core&quot;-&amp;gt;&quot;companies&quot; yang berisi encrypt dari CompanyDB" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="390" width="210" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-63" value="Update / Tambahkan field &quot;roles&quot; di &quot;scm_core&quot;-&amp;gt;&quot;companies&quot; yang berisi role &quot;adm&quot; yang baru didaftar" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="350" y="490" width="210" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-68" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="NHz0bLsr8eyzy1d1SoRF-64" target="NHz0bLsr8eyzy1d1SoRF-67">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-64" value="Update / Tambahkan field &quot;roles&quot; di &quot;scm_core&quot;-&amp;gt;&quot;companies&quot; yang berisi role &quot;adm&quot; yang baru didaftar" style="whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="840" y="530" width="335" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="NHz0bLsr8eyzy1d1SoRF-67" value="Finish" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="620" y="560" width="80" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

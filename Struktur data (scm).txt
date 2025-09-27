@@ -1,0 +1,178 @@
+CREATE TABLE locations (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    type VARCHAR(50) NOT NULL, -- warehouse, rack, bin, hu, slot, etc
+    parent_id BIGINT REFERENCES locations(id) ON DELETE SET NULL,
+    path TEXT,
+    level INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+
+CREATE TABLE goods (
+    id BIGSERIAL PRIMARY KEY,
+    goods_number VARCHAR(100) UNIQUE NOT NULL,
+    description TEXT,
+    unit VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE handling_units (
+    id BIGSERIAL PRIMARY KEY,
+    hu_code VARCHAR(100) UNIQUE NOT NULL,
+    handling_unit_type_id BIGINT REFERENCES handling_unit_types(id) ON DELETE SET NULL,
+    location_id BIGINT REFERENCES locations(id) ON DELETE SET NULL,
+    seq_num BIGINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE goods_in_hu (
+    id BIGSERIAL PRIMARY KEY,
+    hu_id BIGINT REFERENCES handling_units(id) ON DELETE CASCADE,
+    goods_id BIGINT REFERENCES goods(id) ON DELETE CASCADE,
+    location_id BIGINT REFERENCES locations(id) ON DELETE SET NULL, -- slot atau sublokasi
+    quantity INT NOT NULL,
+    status VARCHAR(50) DEFAULT 'in_stock', -- bisa berubah
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE goods_movement (
+    id BIGSERIAL PRIMARY KEY,
+    goods_id BIGINT REFERENCES goods(id) ON DELETE CASCADE,
+    from_location_id BIGINT REFERENCES locations(id) ON DELETE SET NULL,
+    to_location_id BIGINT REFERENCES locations(id) ON DELETE SET NULL,
+    from_hu_id BIGINT REFERENCES handling_units(id) ON DELETE SET NULL,
+    to_hu_id BIGINT REFERENCES handling_units(id) ON DELETE SET NULL,
+    quantity INT NOT NULL,
+    movement_type VARCHAR(50), -- e.g. 'MOVE', 'TRANSFER', 'ADJUSTMENT', 'PICK', etc.
+    status_after VARCHAR(50), -- e.g. 'in_stock', 'reserved'
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    note TEXT
+);
+
+
+CREATE TABLE inventory_adjustments (
+    id BIGSERIAL PRIMARY KEY,
+    goods_id BIGINT REFERENCES goods(id) ON DELETE CASCADE,
+    location_id BIGINT REFERENCES locations(id) ON DELETE SET NULL,
+    hu_id BIGINT REFERENCES handling_units(id) ON DELETE SET NULL,
+    previous_quantity INT,
+    adjusted_quantity INT,
+    adjustment_type VARCHAR(50), -- e.g. 'opname', 'damage', 'correction', 'missing', 'gain'
+    reason TEXT,
+    adjusted_by VARCHAR(100), -- nama user atau sistem
+    adjusted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(20) DEFAULT 'pending',
+    approved_by VARCHAR(100),
+    approved_at TIMESTAMP
+);
+
+
+CREATE TABLE assignments (
+    id BIGSERIAL PRIMARY KEY,
+    assignment_code VARCHAR(100) UNIQUE NOT NULL,
+    title TEXT,
+    description TEXT,
+    status VARCHAR(50) DEFAULT 'draft', -- draft, in_progress, completed, cancelled
+    created_by BIGINT REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    approved_at TIMESTAMP,
+    approved_by BIGINT REFERENCES users(id)
+);
+
+
+
+CREATE TABLE assignment_steps (
+    id BIGSERIAL PRIMARY KEY,
+    assignment_id BIGINT REFERENCES assignments(id) ON DELETE CASCADE,
+    step_order INT NOT NULL,
+    title TEXT NOT NULL,
+    role_required VARCHAR(50), -- e.g., 'admin', 'operator', etc.
+    is_dynamic BOOLEAN DEFAULT FALSE, -- true jika langkah disesuaikan saat eksekusi
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE assignment_logs (
+    id BIGSERIAL PRIMARY KEY,
+    assignment_step_id BIGINT REFERENCES assignment_steps(id) ON DELETE CASCADE,
+    user_id BIGINT REFERENCES users(id),
+    hu_id BIGINT REFERENCES handling_units(id),
+    location_id BIGINT REFERENCES locations(id), -- alamat akhir atau aktual
+    action TEXT, -- e.g., 'placed', 'replaced', 'confirmed', 'skipped'
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE inbound_simulations (
+    id BIGSERIAL PRIMARY KEY,
+    invoice_number VARCHAR(100),
+    goods_id BIGINT REFERENCES goods(id),
+    total_quantity INT,
+    created_by BIGINT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE inbound_simulation_details (
+    id BIGSERIAL PRIMARY KEY,
+    simulation_id BIGINT REFERENCES inbound_simulations(id) ON DELETE CASCADE,
+    hu_label VARCHAR(50), -- misal "Pallet-001"
+    quantity INT,
+    bin_location_id BIGINT REFERENCES locations(id),
+    hu_type VARCHAR(50) -- e.g. pallet, box
+);
+
+CREATE TABLE handling_unit_types (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,       -- e.g., "Pallet Kayu", "Pallet Plastik"
+    description TEXT,
+    length_cm INT,
+    width_cm INT,
+    height_cm INT,
+    max_weight_kg DECIMAL(10,2),
+    is_active BOOLEAN DEFAULT TRUE
+);
+CREATE TABLE hu_capacity (
+    id BIGSERIAL PRIMARY KEY,
+    goods_id BIGINT REFERENCES goods(id) ON DELETE CASCADE,
+    hu_type_id BIGINT REFERENCES handling_unit_types(id) ON DELETE CASCADE,
+    capacity INT NOT NULL, -- jumlah maksimal per HU ini
+);
+
+CREATE TABLE inbound_simulations (
+    id BIGSERIAL PRIMARY KEY,
+    invoice_number VARCHAR(100),
+    goods_id BIGINT REFERENCES goods(id),
+    total_quantity INT,
+    created_by BIGINT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE inbound_simulation_details (
+    id BIGSERIAL PRIMARY KEY,
+    simulation_id BIGINT REFERENCES inbound_simulations(id) ON DELETE CASCADE,
+    hu_label VARCHAR(50), -- misal "Pallet-001"
+    quantity INT,
+    bin_location_id BIGINT REFERENCES locations(id),
+    hu_type_id BIGINT REFERENCES handling_unit_types(id) ON DELETE CASCADE,
+);
+
+CREATE TABLE menus (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    url TEXT,
+    desc TEXT,
+    codename VARCHAR(100) UNIQUE NOT NULL,
+    parent_id INT REFERENCES menus(id) ON DELETE CASCADE
+);
+
+
+AWITH RECURSIVE menu_tree AS (
+  SELECT * FROM menus WHERE id = 1
+  UNION ALL
+  SELECT m.* FROM menus m
+  INNER JOIN menu_tree mt ON m.parent_id = mt.id
+)
+SELECT * FROM menu_tree;

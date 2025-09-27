@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golang-deployment
+  labels: 
+    app: golang
+    environment: dev
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: golang
+  template:
+    metadata:
+      labels:
+        app: golang
+    spec:
+      containers:
+      - name: go-app
+        image: salomo07/scmproject:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: COUCHDB_USER
+          value: admindev
+        - name: COUCHDB_PASSWORD
+          value: cRwoOG0UjxbWLwyXKRhMbep4b1LzJVIpabiVgm5hbPOeq4YSJBrAK

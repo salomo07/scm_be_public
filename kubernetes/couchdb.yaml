@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: couchdb-deployment
+  labels: 
+    app: couchdb
+    environment: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: couchdb
+  template:
+    metadata:
+      labels:
+        app: couchdb
+    spec:
+      containers:
+      - name: couchdb-container
+        image: couchdb:latest
+        ports:
+        - containerPort: 5984
+        env:
+        - name: COUCHDB_USER
+          value: admindev
+        - name: COUCHDB_PASSWORD
+          value: cRwoOG0UjxbWLwyXKRhMbep4b1LzJVIpabiVgm5hbPOeq4YSJBrAK
+        resources:
+          limits:
+            memory: "64Mi"
+            cpu: "120m"

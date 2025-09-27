@@ -1,0 +1,195 @@
+{
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "All API for SCM.",
+        "title": "SCM  API (Go Swagger)",
+        "contact": {
+            "name": "salomo07",
+            "email": "sitompulsalomo@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "host": "localhost:8081",
+    "basePath": "/api/v1",
+    "paths": {
+        "/Auth/Login": {
+            "post": {
+                "description": "Login",
+                "parameters": [
+                    {
+                        "description": "Login request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful login",
+                        "schema": {
+                            "$ref": "#/definitions/models.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.DefaultResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.AccessMenu": {
+            "type": "object",
+            "required": [
+                "_id",
+                "create",
+                "delete",
+                "idmenu",
+                "idrole",
+                "read",
+                "update"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "accesssubmenu": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AccessSubmenu"
+                    }
+                },
+                "create": {
+                    "type": "boolean"
+                },
+                "delete": {
+                    "type": "boolean"
+                },
+                "idmenu": {
+                    "type": "string"
+                },
+                "idrole": {
+                    "type": "string"
+                },
+                "read": {
+                    "type": "boolean"
+                },
+                "update": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.AccessSubmenu": {
+            "type": "object",
+            "required": [
+                "create",
+                "delete",
+                "idsubmenu",
+                "read",
+                "update"
+            ],
+            "properties": {
+                "create": {
+                    "type": "boolean"
+                },
+                "delete": {
+                    "type": "boolean"
+                },
+                "idsubmenu": {
+                    "type": "integer"
+                },
+                "read": {
+                    "type": "boolean"
+                },
+                "update": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.DefaultResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.LoginRequest": {
+            "description": "The structure of login request with username and password.",
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "duration": {
+                    "description": "@description The duration of the login session in hours (optional).",
+                    "type": "integer"
+                },
+                "idcompany": {
+                    "description": "@description The company ID of the user (optional).",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "@required\n@description The password of the user.",
+                    "type": "string"
+                },
+                "rememberpassword": {
+                    "description": "@description Whether to remember the user's password (optional).",
+                    "type": "boolean"
+                },
+                "username": {
+                    "description": "@required\n@description The username of the user.",
+                    "type": "string"
+                }
+            }
+        },
+        "models.LoginResponse": {
+            "description": "The structure of the login response.",
+            "type": "object",
+            "properties": {
+                "access": {
+                    "description": "@description The access menu available for the user after login, including submenus.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AccessMenu"
+                    }
+                },
+                "expired": {
+                    "description": "@description The expiration time of the generated token.",
+                    "type": "string"
+                },
+                "idcompany": {
+                    "description": "@description The company ID of the user (optional).",
+                    "type": "string"
+                },
+                "islogin": {
+                    "description": "@description Indicates whether the user is successfully logged in.",
+                    "type": "boolean"
+                },
+                "ismaintenance": {
+                    "description": "@description Indicates whether the system is under maintenance.",
+                    "type": "boolean"
+                },
+                "token": {
+                    "description": "@description The token generated for the user after login.",
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

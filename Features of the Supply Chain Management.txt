@@ -1,0 +1,13 @@
+Features of the Supply Chain Management
+
+- Inventory Management
+- Order Management
+- Billing System
+- Warehouse Management
+- Shipping and Tracking System
+- Forecasting System
+- Real-Time Analytics and Reporting Dashboard
+- Third-Party Integrations
+- Suppliers/Vendor Management Toolkit
+- Analytics and Reporting Dashboard
+- Customer Request/Return Management

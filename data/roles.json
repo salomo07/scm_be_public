@@ -1,0 +1,4 @@
+[
+    {"name":"Petugas Gudang","code":"pg","desc":"Bertanggung jawab atas tugas-tugas operasional sehari-hari di dalam gudang, seperti penerimaan barang, penempatan barang, pengambilan barang, pembungkusan, dan pengeluaran barang. Memastikan bahwa inventaris fisik sesuai dengan catatan sistem."},
+    {"name":"Supervisor Gudang","code":"sg","desc":"Mengawasi operasi gudang dan mengkoordinasikan tugas-tugas di antara petugas gudang. Memantau metrik kinerja, menangani masalah, dan memastikan penggunaan sumber daya yang efisien. Memberikan dukungan dalam mengelola tingkat persediaan dan mengoptimalkan proses."}
+]

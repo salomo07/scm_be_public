@@ -1,0 +1,32 @@
+[
+    {
+    "role_id": "pg",
+    "menu_codename": "task",
+    "permissions": {
+        "view": true,
+        "edit": true,
+        "create": true,
+        "delete": true
+    }
+    },
+    {
+    "role_id": "pg",
+    "menu_codename": "master",
+    "permissions": {
+        "view": true,
+        "edit": true,
+        "create": true,
+        "delete": true
+    }
+    },
+    {
+    "role_id": "pg",
+    "menu_codename": "master",
+    "permissions": {
+        "view": true,
+        "edit": true,
+        "create": true,
+        "delete": true
+    }
+    }
+]

@@ -1,0 +1,5 @@
+1. Run CouchDB from Kubernetes
+kubectl port-forward deployment/couchdb-deployment 5984:5984 -n default
+
+2. Run Redis from Kubernetes
+kubectl port-forward deployment/redis-deployment 6379:6379 -n default

@@ -1,0 +1,20 @@
+image: golang:1.21.0
+
+pipelines:
+  default:
+    - step:
+        name: Deploy to Server
+        script:
+          - apt-get update && apt-get install -y openssh-client
+
+          - go mod tidy
+          - go build -o scmapp main.go
+
+          # Ensure remote directory exists
+          - ssh rejoice@103.127.132.161 'mkdir -p ~/sharedfolder/scm_be'
+
+          # Debugging steps
+          - ssh rejoice@103.127.132.161 'ls -ld ~/sharedfolder ~/sharedfolder/scm_be'
+
+          - scp scmapp rejoice@103.127.132.161:~/sharedfolder/scm_be
+          - ssh rejoice@103.127.132.161 'cd ~/sharedfolder/scm_be && ./deploy-be.sh'

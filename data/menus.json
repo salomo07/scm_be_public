@@ -1,0 +1,31 @@
+[
+    {
+    "name": "Master Data",
+    "url": "/master",
+    "codename": "master",
+    "desc": "Deskripsi",
+    "submenu": [
+        {
+        "name": "Warehouse Structure",
+        "url": "/master/warehouse",
+        "codename": "master_warehouse",
+        "desc": "Deskripsi",
+        "submenu": []
+        },
+        {
+        "name": "Handling Units",
+        "url": "/master/hu",
+        "codename": "master_hu",
+        "desc": "Deskripsi",
+        "submenu": []
+        }
+    ]
+    },
+    {
+        "name": "Task",
+        "url": "/task",
+        "codename": "task",
+        "desc": "Deskripsi",
+        "submenu":null
+    }
+]
