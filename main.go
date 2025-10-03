@@ -70,7 +70,7 @@ func main() {
 	}
 	router.NotFound = func(ctx *fasthttp.RequestCtx) {
 		ctx.SetStatusCode(fasthttp.StatusNotFound)
-		utils.ShowResponseDefault(ctx, fasthttp.StatusNotFound, "warning", "The endpoint is not found")
+		utils.ShowResponseDefault(ctx, fasthttp.StatusNotFound, "The endpoint is not found", "")
 		ctx.Response.Header.Set("Content-Type", "application/json")
 	}
 	if app_port == "" {

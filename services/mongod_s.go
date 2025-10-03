@@ -479,7 +479,7 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 				}
 				expTime := time.Now().Local().Add(time.Duration(hours) * time.Hour).Unix()
 				expTime1Day := time.Now().Local().Add(time.Duration(24) * time.Hour).Unix()
-				securedUserData := models.LoginFromDB{
+				securedUserData := models.LoginResponseJWT{
 					AppId:     os.Getenv("APP_ID"),
 					Id:        config.EncodingBase64(dataLogin.Id),
 					NIK:       config.EncodingBase64(dataLogin.NIK),

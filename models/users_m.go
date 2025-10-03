@@ -15,7 +15,19 @@ type LoginFromDB struct {
 	Role      Role    `json:"role"`
 	Username  string  `json:"username"`
 }
-
+type LoginResponseJWT struct {
+	Id        string  `json:"_id"`
+	AppId     string  `json:"appid"`
+	Contact   Contact `json:"contact"`
+	IdCompany string  `json:"idcompany"`
+	IdBranch  string  `json:"idbranch"`
+	IdRole    string  `json:"idrole"`
+	Name      string  `json:"name"`
+	Nickname  string  `json:"nickname"`
+	NIK       string  `json:"nik"`
+	Role      Role    `json:"role"`
+	Username  string  `json:"username"`
+}
 type User struct {
 	Id        string  `json:"_id" validate:"required"`
 	AppId     string  `json:"appid"`
