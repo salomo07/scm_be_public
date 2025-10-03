@@ -1,23 +1,16 @@
 package main
 
 import (
-	"context"
-	"fmt"
 	"log"
 	"os"
-	"os/exec"
 	"scm/config"
 	"scm/routers"
 	"scm/utils"
 
 	_ "scm/docs" // Pastikan path ini sesuai dengan lokasi file docs.go yang dihasilkan oleh `swag init`
-	"scm/services"
 
 	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 var app_port = os.Getenv("APP_PORT")
@@ -116,31 +109,4 @@ func withCORS(handler fasthttp.RequestHandler) fasthttp.RequestHandler {
 
 		handler(ctx)
 	}
-}
-func initConnectionMongoDB() {
-	uri := "mongodb://superuser:inipassmongo@localhost:27017/admin"
-	clientOptions := options.Client().ApplyURI(uri)
-	client, err := mongo.Connect(context.TODO(), clientOptions)
-	if err != nil {
-		// return nil, fmt.Sprintf("Failed to connect to database: %v", err)
-	}
-
-	err = client.Ping(context.TODO(), readpref.Primary())
-	if err != nil {
-		// return nil, fmt.Sprintf("Failed to ping database: %v", err)
-	}
-	services.SetMongoClient(client)
-}
-func handleGithubWebhook(ctx *fasthttp.RequestCtx) {
-	// Eksekusi perintah untuk memperbarui proyek
-	cmd := exec.Command("sh", "-c", "cd /path/to/your/project && git pull origin main_dev")
-	stdoutStderr, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Fatalf("Error: %v", err)
-	}
-	fmt.Printf("Output: %s\n", stdoutStderr)
-
-	// Kirim respons ke GitHub
-	ctx.SetStatusCode(fasthttp.StatusOK)
-	ctx.SetBody([]byte("Webhook received!"))
 }
