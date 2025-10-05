@@ -39,3 +39,10 @@ type BranchRequest struct {
 	Desc          string `json:"desc"`
 	ContactMobile string `json:"contactmobile"`
 }
+type RoleRequest struct {
+	Id        string `json:"_id,omitempty"`
+	Name      string `json:"name" validate:"required"`
+	IdCompany string `json:"idcompany" validate:"required"`
+	Code      string `json:"code" validate:"required"`
+	Desc      string `json:"desc"`
+}

@@ -10,6 +10,12 @@ import (
 )
 
 func UserRouters(router *fasthttprouter.Router) {
+	print(" -user\n")
+	print(" -" + consts.URL_User_Find + "\n")
+	print(" -" + consts.URL_User_FindMany + "\n")
+	print(" -" + consts.URL_User_Update + "\n")
+	print(" -" + consts.URL_User_Create + "\n")
+
 	router.POST(consts.URL_User_Find, func(ctx *fasthttp.RequestCtx) {
 		ctx.Response.Header.Set("Content-Type", "application/json")
 		user, err, isSuperAdmin, isCompanyAdmin := controllers.CheckSession(ctx)
@@ -62,5 +68,4 @@ func UserRouters(router *fasthttprouter.Router) {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusUnauthorized, "warning", "You have not access to this endpoint (Company is unregistered).")
 		}
 	})
-	print(" -user\n")
 }

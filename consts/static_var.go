@@ -20,7 +20,7 @@ var Coll_Category = "category"
 var Coll_Branch = "branch"
 var Coll_AccessMenu = "accessmenu"
 var InitiateData = `[{"collection":"users","json":'{"name":"Company Administrator","code":"adm","desc":"Fullaccess for all company data"}'}]`
-var Default_Role_Company_Json = `{"_id":"r_owner","name":"Company Administrator","code":"adm","desc":"Fullaccess for all company's data"}`
+var Default_Role_Company_Json = `{"name":"Company Administrator","code":"adm","desc":"Fullaccess for all company's data","idcompany":"c_1746592218234399"}`
 var MONGODB_CRED_ADMIN = ""
 
 var CDB_HOST = "http://localhost"

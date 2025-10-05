@@ -19,14 +19,20 @@ var URL_Branch_Find = company + "branch/find"
 var URL_Branch_Upsert = company + "branch/upsert"
 var URL_Branch_Delete = company + "branch/delete"
 
+var master = "/api/v1/master/"
+var URL_Role_Find = master + "roles/find"
+var URL_Role_Upsert = master + "roles/upsert"
+var URL_Role_Create = master + "roles/create"
+var URL_Role_Delete = master + "roles/delete"
+
 // SuperAdmin - Menu URL
 var URL_Menu_Show_All = "/api/v1/admin/menu/showall"
 var URL_Menu_Create = "/api/v1/admin/menu/add"
 var URL_Menu_Create_Bulk = "/api/v1/admin/menu/addBulk"
 
 // SuperAdmin, CompanyAdmin - Role URL
-var URL_Role_Create = "/api/v1/admin/role/create"
-var URL_Role_CreateBulk = "/api/v1/admin/role/create" // Soon
+// var URL_Role_Create = "/api/v1/admin/role/create"
+// var URL_Role_CreateBulk = "/api/v1/admin/role/create" // Soon
 
 // SuperAdmin, CompanyAdmin - Access URL
 var URL_AccessMenu_Find = "/api/v1/admin/access/find"

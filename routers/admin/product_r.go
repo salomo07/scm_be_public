@@ -11,11 +11,11 @@ import (
 )
 
 func ProductRouters(router *fasthttprouter.Router) {
-	print(" -product\n")
+	print("\n -product\n")
 	print(" -" + consts.URL_Product_Upsert + "\n")
 	print(" -" + consts.URL_Product_Delete + "\n")
-
 	print(" -" + consts.URL_Category_Product_Upsert + "\n")
+
 	router.POST(consts.URL_Category_Product_Upsert, func(ctx *fasthttp.RequestCtx) {
 		ctx.Response.Header.Set("Content-Type", "application/json")
 		user, err, _, isCompanyAdmin := controllers.CheckSession(ctx)

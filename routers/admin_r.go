@@ -14,13 +14,14 @@ func AdminRouters(router *fasthttprouter.Router) {
 
 	// master_routers(router)
 	accessmenu_routers(router)
-	role_routers(router)
+	// role_routers(router)
 	menu_routers(router)
 
 	print("--ADMIN Router--\n")
 	admin.UserRouters(router)
 	admin.CompanyRouters(router)
 	admin.BranchRouters(router)
+	admin.RolesRouters(router)
 	admin.ProductRouters(router)
 	injectToDB(router)
 }
@@ -193,22 +194,22 @@ func menu_routers(router *fasthttprouter.Router) {
 	print(" -menu\n")
 }
 
-func role_routers(router *fasthttprouter.Router) {
-	router.POST(consts.URL_Role_Create, func(ctx *fasthttp.RequestCtx) {
-		ctx.Response.Header.Set("Content-Type", "application/json")
-		user, err, isSuperAdmin, isCompanyAdmin := controllers.CheckSession(ctx)
-		if err != "" {
-			utils.ShowResponseDefault(ctx, fasthttp.StatusInternalServerError, "error", err)
-			return
-		} else if isSuperAdmin || isCompanyAdmin {
-			controllers.AddRole(ctx, user)
-		} else {
-			utils.ShowResponseDefault(ctx, fasthttp.StatusUnauthorized, "warning", consts.Unauthorized)
-			return
-		}
-	})
-	print(" -role\n")
-}
+//	func role_routers(router *fasthttprouter.Router) {
+//		router.POST(consts.URL_Role_Create, func(ctx *fasthttp.RequestCtx) {
+//			ctx.Response.Header.Set("Content-Type", "application/json")
+//			user, err, isSuperAdmin, isCompanyAdmin := controllers.CheckSession(ctx)
+//			if err != "" {
+//				utils.ShowResponseDefault(ctx, fasthttp.StatusInternalServerError, "error", err)
+//				return
+//			} else if isSuperAdmin || isCompanyAdmin {
+//				controllers.AddRole(ctx, user)
+//			} else {
+//				utils.ShowResponseDefault(ctx, fasthttp.StatusUnauthorized, "warning", consts.Unauthorized)
+//				return
+//			}
+//		})
+//		print(" -role\n")
+//	}
 func injectToDB(router *fasthttprouter.Router) {
 	router.POST(consts.URL_Insert_DB, func(ctx *fasthttp.RequestCtx) {
 		user, err, isSuperAdmin, _ := controllers.CheckSession(ctx)
