@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
 	"scm/config"
 	"scm/consts"
@@ -207,13 +208,14 @@ func AddRole(ctx *fasthttp.RequestCtx, user models.User) {
 		credRoot := utils.GetMongoDBRoot()
 		query := `{"$and":[{"$or":[{"roles.name":"` + roleModel.Name + `"},{"roles.code":"` + roleModel.Code + `"}]},{"_id":"` + user.IdCompany + `"}]}`
 		res, errFind, _ := services.FindOneRootDBUsingURI(services.GetURI(credRoot), credRoot.DBName, consts.Coll_Companies, query, "", "")
-		if res == "" && errFind == "" {
+		if res == nil && errFind == "" {
 			//Jika tidak ditemukan, ambil dulu Roles yang terdapat di "companies"
 			resBody, errStr, statuscode := services.FindOneRootDBUsingURI(services.GetURI(credRoot), consts.DB_CORE_NAME, consts.Coll_Companies, `{"_id":"`+user.IdCompany+`"}`, "", "")
-			if resBody != "" {
+			if resBody != nil {
 				// Insert data Role di DB "scm_core->companies"
 				var companyObj models.Company
-				utils.JsonToStruct(resBody, &companyObj)
+				jsonBytes, _ := json.Marshal(resBody)
+				utils.JsonToStruct(string(jsonBytes), &companyObj)
 
 				_, errUp, _ := services.UpdateOneUsingURI(services.GetURI(credRoot), credRoot.DBName, consts.Coll_Companies, `{"_id":"`+user.IdCompany+`"}`, `{"$addToSet":{"roles":`+utils.StructToJson(roleModel)+`}}`, false)
 				if errUp != "" {

@@ -345,25 +345,30 @@ func FindOne(idCompany, collectionName, query, projection, sort string) (string,
 	return string(resultBytes), "", 200
 }
 
-func FindOneRootDBUsingURI(uri string, dbname string, collectionName string, query, projection, sort string) (string, string, int) {
-	// Connect DB via URI
+func FindManyRootDBUsingURI(uri string, dbname string, collectionName string, query, projection, sort string, limit, skip int64) ([]bson.M, string, int) {
 	client, errConnect := connectDB(uri)
 	if errConnect != "" {
-		return "", errConnect, 500
+		return nil, errConnect, 500
 	}
+	defer client.Disconnect(context.Background())
+
 	collection := client.Database(dbname).Collection(collectionName)
 
 	// Parse filter
 	var filter bson.M
-	if err := bson.UnmarshalExtJSON([]byte(query), true, &filter); err != nil {
-		return "", consts.ErrMarshalling + " query", 400
+	if query != "" {
+		if err := bson.UnmarshalExtJSON([]byte(query), true, &filter); err != nil {
+			return nil, consts.ErrMarshalling + " query", 400
+		}
+	} else {
+		filter = bson.M{}
 	}
 
 	// Parse projection
 	var proj bson.M
 	if projection != "" {
 		if err := bson.UnmarshalExtJSON([]byte(projection), true, &proj); err != nil {
-			return "", consts.ErrMarshalling + " projection", 400
+			return nil, consts.ErrMarshalling + " projection", 400
 		}
 	}
 
@@ -371,7 +376,83 @@ func FindOneRootDBUsingURI(uri string, dbname string, collectionName string, que
 	var sortOpt bson.M
 	if sort != "" {
 		if err := bson.UnmarshalExtJSON([]byte(sort), true, &sortOpt); err != nil {
-			return "", consts.ErrMarshalling + " sort", 400
+			return nil, consts.ErrMarshalling + " sort", 400
+		}
+	}
+
+	// Build find options
+	opts := options.Find()
+	if len(proj) > 0 {
+		opts.SetProjection(proj)
+	}
+	if len(sortOpt) > 0 {
+		opts.SetSort(sortOpt)
+	}
+	if limit > 0 {
+		opts.SetLimit(limit)
+	}
+	if skip > 0 {
+		opts.SetSkip(skip)
+	}
+
+	// Execute query
+	cursor, err := collection.Find(context.Background(), filter, opts)
+	if err != nil {
+		return nil, consts.ErrFindingDoc, 500
+	}
+	defer cursor.Close(context.Background())
+
+	var results []bson.M
+	for cursor.Next(context.Background()) {
+		var doc bson.M
+		if err := cursor.Decode(&doc); err != nil {
+			return nil, consts.ErrDecodingDoc, 500
+		}
+
+		if oid, ok := doc["_id"].(primitive.ObjectID); ok {
+			doc["_id"] = oid.Hex()
+		}
+
+		results = append(results, doc)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, consts.ErrCursor + " : " + err.Error(), 500
+	}
+
+	return results, "", 200
+}
+
+func FindOneRootDBUsingURI(uri string, dbname string, collectionName string, query, projection, sort string) (bson.M, string, int) {
+
+	// Connect DB via URI
+	client, errConnect := connectDB(uri)
+	if errConnect != "" {
+		return nil, errConnect, 500
+	}
+	defer client.Disconnect(context.Background())
+
+	collection := client.Database(dbname).Collection(collectionName)
+
+	// Parse filter
+	var filter bson.M
+	if err := bson.UnmarshalExtJSON([]byte(query), true, &filter); err != nil {
+		return nil, consts.ErrMarshalling + " query", 400
+	}
+
+	// Parse projection
+	var proj bson.M
+	if projection != "" {
+		if err := bson.UnmarshalExtJSON([]byte(projection), true, &proj); err != nil {
+			return nil, consts.ErrMarshalling + " projection", 400
+		}
+	}
+
+	// Parse sort
+	var sortOpt bson.M
+	if sort != "" {
+		if err := bson.UnmarshalExtJSON([]byte(sort), true, &sortOpt); err != nil {
+			return nil, consts.ErrMarshalling + " sort", 400
 		}
 	}
 
@@ -389,23 +470,17 @@ func FindOneRootDBUsingURI(uri string, dbname string, collectionName string, que
 	err := collection.FindOne(context.Background(), filter, opts).Decode(&result)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return "", "", 200
+			return nil, "", 200
 		}
-		return "", consts.ErrFindingDoc, 500
+		return nil, consts.ErrFindingDoc + " : " + err.Error(), 500
 	}
 
-	// Convert _id ke string biar rapi
+	// Convert _id ke string
 	if oid, ok := result["_id"].(primitive.ObjectID); ok {
 		result["_id"] = oid.Hex()
 	}
 
-	// Marshal hasil
-	resultBytes, err := json.Marshal(result)
-	if err != nil {
-		return "", consts.ErrMarshalling, 500
-	}
-
-	return string(resultBytes), "", 200
+	return result, "", 200
 }
 
 func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq models.LoginRequest) {
@@ -547,29 +622,28 @@ func InsertOneUsingURI(uri string, dbName string, collectionName string, documen
 	return result, "", 200
 }
 
-func InsertOne(idCompany, collectionName, document string) (string, string, int) {
+func InsertOne(idCompany, collectionName, document string) (*mongo.InsertOneResult, string, int) {
 	db, err := GetMongoPool(idCompany, "")
 	if err != nil {
-		return "", consts.ErrDatabase + " : " + err.Error(), fasthttp.StatusInternalServerError
+		return nil, consts.ErrDatabase + " : " + err.Error(), fasthttp.StatusInternalServerError
 	}
 	collection := db.Collection(collectionName)
 
 	var doc bson.M
 	if err := bson.UnmarshalExtJSON([]byte(document), true, &doc); err != nil {
-		return "", "Error unmarshalling document : " + err.Error(), 400
+		return nil, "Error unmarshalling document : " + err.Error(), 400
 	}
 
 	result, err := collection.InsertOne(context.Background(), doc)
 	if err != nil {
-		return "", "Error inserting document : " + err.Error(), 500
+		return nil, "Error inserting document : " + err.Error(), 500
 	}
 
-	resultBytes, err := json.Marshal(result)
 	if err != nil {
-		return "", "Error marshalling result : " + err.Error(), 500
+		return nil, "Error marshalling result : " + err.Error(), 500
 	}
 
-	return string(resultBytes), "", 200
+	return result, "", 200
 }
 
 func getCredFromDB(idCompanyDecoded string) string {
@@ -578,7 +652,8 @@ func getCredFromDB(idCompanyDecoded string) string {
 		return errGetCred
 	}
 	var company models.Company
-	utils.JsonToStruct(res, &company)
+	jsonBytes, _ := json.Marshal(res)
+	utils.JsonToStruct(string(jsonBytes), &company)
 	GetMongoPool(config.EncodingBase64(idCompanyDecoded), GetURI(models.CredDB{DBName: idCompanyDecoded, User: idCompanyDecoded, Pass: config.EncryptAES(idCompanyDecoded), Nonce: company.Nonce}))
 	return ""
 }
@@ -730,39 +805,37 @@ func decryptUserColl(updateFields map[string]interface{}) map[string]interface{}
 	return updateFields
 }
 
-func UpdateMany(idCompany, collectionName, query, update string) (string, string, int) {
+func UpdateMany(idCompany, collectionName, query, update string) (*mongo.UpdateResult, string, int) {
 	// Ambil koneksi dari pool
 	db, err := GetMongoPool(idCompany, "")
 	if err != nil {
-		return "", consts.ErrDatabase + " : " + err.Error(), fasthttp.StatusInternalServerError
+		return nil, consts.ErrDatabase + " : " + err.Error(), fasthttp.StatusInternalServerError
 	}
 	collection := db.Collection(collectionName)
 
 	// Unmarshal query filter
 	var filter bson.M
 	if err := bson.UnmarshalExtJSON([]byte(query), true, &filter); err != nil {
-		return "", "Error unmarshalling query: " + err.Error(), 400
+		return nil, "Error unmarshalling query: " + err.Error(), 400
 	}
 
 	// Unmarshal update document
 	var updateDoc bson.M
 	if err := bson.UnmarshalExtJSON([]byte(update), true, &updateDoc); err != nil {
-		return "", "Error unmarshalling update document: " + err.Error(), 400
+		return nil, "Error unmarshalling update document: " + err.Error(), 400
 	}
 
 	// Eksekusi UpdateMany
 	result, err := collection.UpdateMany(context.Background(), filter, updateDoc)
 	if err != nil {
-		return "", "Error updating documents: " + err.Error(), 500
+		return nil, "Error updating documents: " + err.Error(), 500
 	}
 
-	// Marshal hasil ke JSON
-	resultBytes, err := json.Marshal(result)
 	if err != nil {
-		return "", "Error marshalling result: " + err.Error(), 500
+		return nil, "Error marshalling result: " + err.Error(), 500
 	}
 
-	return string(resultBytes), "", 200
+	return result, "", 200
 }
 
 func DeleteOne(idCompany, collectionName, query string) (*mongo.DeleteResult, string, int) {

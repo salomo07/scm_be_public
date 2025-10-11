@@ -25,6 +25,11 @@ var URL_Role_Upsert = master + "roles/upsert"
 var URL_Role_Create = master + "roles/create"
 var URL_Role_Delete = master + "roles/delete"
 
+// SuperAdmin, CompanyAdmin - User URL
+var URL_User_Find = master + "users/find"
+var URL_User_Upsert = master + "users/upsert"
+var URL_User_Delete = master + "users/delete"
+
 // SuperAdmin - Menu URL
 var URL_Menu_Show_All = "/api/v1/admin/menu/showall"
 var URL_Menu_Create = "/api/v1/admin/menu/add"
@@ -41,12 +46,6 @@ var URL_AccessMenu_Create = "/api/v1/admin/access/create"
 var URL_AccessMenu_CreateMany = "/api/v1/admin/access/createMany"
 var URL_AccessMenu_Update = "/api/v1/admin/access/update"
 var URL_AccessMenu_Delete = "/api/v1/admin/access/delete"
-
-// SuperAdmin, CompanyAdmin - User URL
-var URL_User_Find = "/api/v1/admin/user/find"
-var URL_User_FindMany = "/api/v1/admin/user/findMany"
-var URL_User_Update = "/api/v1/admin/user/update"
-var URL_User_Create = "/api/v1/admin/user/create"
 
 // SuperAdmin - Hanya boleh dipakai URGENT (backdoor)
 var URL_Find_DB = "/api/v1/db/find"

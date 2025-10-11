@@ -18,25 +18,25 @@ func RolesRouters(router *fasthttprouter.Router) {
 
 	router.POST(consts.URL_Role_Find, func(ctx *fasthttp.RequestCtx) {
 		ctx.Response.Header.Set("Content-Type", "application/json")
-		user, err, isSuperAdmin, isCompanyAdmin := controllers.CheckSession(ctx)
+		_, err, isSuperAdmin, isCompanyAdmin := controllers.CheckSession(ctx)
 		if err != "" {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusInternalServerError, "error", err)
 			return
 		} else if isSuperAdmin || isCompanyAdmin {
-			master_controller.FindRoles(ctx, user)
+			master_controller.FindRoles(ctx)
 		} else {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusUnauthorized, "warning", consts.Unauthorized)
 			return
 		}
 	})
 	router.POST(consts.URL_Role_Upsert, func(ctx *fasthttp.RequestCtx) {
-		user, err, _, isCompanyAdmin := controllers.CheckSession(ctx)
+		_, err, isSuperAdmin, isCompanyAdmin := controllers.CheckSession(ctx)
 		ctx.Response.Header.Set("Content-Type", "application/json")
 		if err != "" {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusInternalServerError, err, consts.AdminKeyTidakDikenali+" / terjadi error")
 			return
-		} else if isCompanyAdmin {
-			master_controller.UpsertRole(ctx, user)
+		} else if isSuperAdmin || isCompanyAdmin {
+			master_controller.UpsertRole(ctx)
 		} else {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusUnauthorized, "warning", consts.Unauthorized)
 		}

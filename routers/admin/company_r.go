@@ -10,7 +10,7 @@ import (
 )
 
 func CompanyRouters(router *fasthttprouter.Router) {
-	print("\n -company\n")
+	print("\n -company")
 	print("\n " + consts.URL_Company_Create)
 	print("\n " + consts.URL_Company_Initiate)
 	// START_SAAS_FEATURE

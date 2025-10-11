@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"os"
 	"scm/config"
 	"scm/consts"
@@ -43,7 +44,10 @@ func RegisterCompany(ctx *fasthttp.RequestCtx, user models.User) {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusInternalServerError, "warning", consts.FailGetUser)
 			return
 		} else {
-			utils.JsonToStruct(existUserResult, &userOwnerExist)
+			if existUserResult != nil {
+				jsonBytes, _ := json.Marshal(existUserResult)
+				utils.JsonToStruct(string(jsonBytes), &userOwnerExist)
+			}
 			if userOwnerExist.Username != "" {
 				utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, "warning", consts.UserAlreadyExist)
 				return
@@ -53,7 +57,8 @@ func RegisterCompany(ctx *fasthttp.RequestCtx, user models.User) {
 
 	query := `{"alias":"` + companyModel.Alias + `","appid":"` + companyModel.AppId + `"}`
 	existCompany, errFind, statuscode := services.FindOneRootDBUsingURI(services.GetURI(credRoot), consts.DB_CORE_NAME, consts.Coll_Companies, query, "", "")
-	utils.JsonToStruct(existCompany, &companyModel)
+	jsonBytes, _ := json.Marshal(existCompany)
+	utils.JsonToStruct(string(jsonBytes), &companyModel)
 	if errFind != "" {
 		utils.ShowResponseDefault(ctx, statuscode, "error", errFind)
 		return
