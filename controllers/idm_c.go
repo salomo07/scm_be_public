@@ -258,7 +258,8 @@ func CheckSession(ctx *fasthttp.RequestCtx) (
 
 	// Decode ke user
 	_ = json.Unmarshal(claims.Data, &user)
-
+	var loginResponseJWT models.LoginResponseJWT
+	_ = json.Unmarshal(claims.Data, &loginResponseJWT)
 	// Decode ke session (punya AdminKey)
 	_ = json.Unmarshal(claims.Data, &session)
 
@@ -272,7 +273,7 @@ func CheckSession(ctx *fasthttp.RequestCtx) (
 
 	// Role-based flag
 	decoded := config.DecodingBase64(user.IdRole)
-	if strings.Contains(decoded, "owner") || strings.Contains(decoded, "admin") {
+	if loginResponseJWT.Role.Code == "adm" || strings.Contains(decoded, "admin") {
 		return user, "", false, true
 	}
 	return user, "", false, false

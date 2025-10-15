@@ -529,6 +529,56 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 	}
 	]`
 
+	// pipeline := `[
+	// 	{
+	// 		"$match": {
+	// 		"$or": [
+	// 			{ "username": "` + usernameDecrypted + `" },
+	// 			{ "contact.mobile": "` + config.DecryptAES(loginReq.Mobile) + `" }
+	// 		]
+	// 		}
+	// 	},
+	// 	{
+	// 		"$lookup": {
+	// 		"from": "` + consts.Coll_Companies + `",
+	// 		"localField": "idcompany",
+	// 		"foreignField": "_id",
+	// 		"as": "company"
+	// 		}
+	// 	},
+	// 	{
+	// 		"$unwind": {
+	// 		"path": "$company",
+	// 		"preserveNullAndEmptyArrays": true
+	// 		}
+	// 	},
+	// 	{
+	// 		 "$lookup": {
+	// 			"from":"` + consts.Coll_Role + `",
+	// 			"let": { "idroleStr": "$idrole" },
+	// 			"pipeline": [
+	// 				{
+	// 				"$match": {
+	// 					"$expr": {
+	// 					"$eq": [
+	// 						"$_id",
+	// 						{ "$toObjectId": "$$idroleStr" }
+	// 					]
+	// 					}
+	// 				}
+	// 				}
+	// 			],
+	// 			"as": "role"
+	// 		}
+	// 	},
+	// 	{
+	// 		"$unwind": {
+	// 		"path": "$role",
+	// 		"preserveNullAndEmptyArrays": true
+	// 		}
+	// 	}
+	// ]`
+	print(pipeline)
 	res, err, code := AggregationOneUsingURI(GetURI(utils.GetMongoDBRoot()), consts.DB_CORE_NAME, consts.Coll_Users, pipeline)
 	if err != "" {
 		if err == consts.ErrNotFoundDoc {
