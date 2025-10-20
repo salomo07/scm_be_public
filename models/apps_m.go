@@ -22,7 +22,6 @@ type AccessMenu struct {
 	Id            string          `json:"_id" validate:"required"`
 	IdRole        string          `json:"idrole" validate:"required"`
 	Idmenu        string          `json:"idmenu" validate:"required"`
-	Menuname      string          `json:"menuname" validate:"required"`
 	AccessSubmenu []AccessSubmenu `json:"accesssubmenu" validate:"dive"`
 	Create        *bool           `json:"create" validate:"required"`
 	Read          *bool           `json:"read" validate:"required"`
@@ -30,9 +29,9 @@ type AccessMenu struct {
 	Delete        *bool           `json:"delete" validate:"required"`
 }
 type AccessSubmenu struct {
-	Idsubmenu *int  `json:"idsubmenu" validate:"required"`
-	Create    *bool `json:"create" validate:"required"`
-	Read      *bool `json:"read" validate:"required"`
-	Update    *bool `json:"update" validate:"required"`
-	Delete    *bool `json:"delete" validate:"required"`
+	Idsubmenu *string `json:"idsubmenu" validate:"required"`
+	Create    *bool   `json:"create" validate:"required"`
+	Read      *bool   `json:"read" validate:"required"`
+	Update    *bool   `json:"update" validate:"required"`
+	Delete    *bool   `json:"delete" validate:"required"`
 }
