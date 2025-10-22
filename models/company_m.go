@@ -47,3 +47,36 @@ type RoleRequest struct {
 	Desc       string       `json:"desc"`
 	AccessMenu []AccessMenu `json:"accessmenu"`
 }
+
+// type UserRequest struct {
+// 	Id        string  `json:"_id,omitempty"`
+// 	Name      string  `json:"name" validate:"required"`
+// 	UserName  string  `json:"username" validate:"required"`
+// 	IdCompany string  `json:"idcompany" validate:"required"`
+// 	IdRole    string  `json:"idrole" validate:"required"`
+// 	Contact   Contact `json:"contact"`
+// 	AppId     string  `json:"appid"`
+// 	IdBranch  string  `json:"idbranch"`
+// }
+
+type UserRequest struct {
+	Id        string  `json:"_id,omitempty"`
+	Appid     string  `json:"appid"`
+	Contact   Contact `json:"contact"`
+	Idbranch  string  `json:"idbranch"`
+	Idcompany string  `json:"idcompany"`
+	Idrole    string  `json:"idrole"`
+	Name      string  `json:"name"`
+	Nickname  string  `json:"nickname"`
+	Nik       string  `json:"nik"`
+	Password  string  `json:"password"`
+	Username  string  `json:"username"`
+	Isactive  bool    `json:"isactive"`
+}
+
+// type Contact struct {
+// 	Email    string `json:"email"`
+// 	Mobile   string `json:"mobile"`
+// 	Phone    string `json:"phone"`
+// 	Whatsapp string `json:"whatsapp"`
+// }

@@ -36,7 +36,7 @@ func UserRouters(router *fasthttprouter.Router) {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusInternalServerError, "error", err)
 			return
 		} else if isSuperAdmin || isCompanyAdmin {
-			master_controller.FindUsers(ctx)
+			master_controller.UpsertUser(ctx)
 		} else {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusUnauthorized, "warning", consts.Unauthorized)
 			return

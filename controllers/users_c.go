@@ -172,13 +172,11 @@ func UpdateUser(ctx *fasthttp.RequestCtx, user models.User) {
 		utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, "warning", consts.EmptyBody)
 		return
 	}
-	type UserMandatory struct { //Field mandatory
+	type UserMandatory struct {
 		Id        string `json:"_id" validate:"required"`
 		IdCompany string `json:"idcompany" validate:"required"`
 	}
-	// var userModel models.User
 	var userModelMandatory UserMandatory
-	// utils.JsonToStruct(string(ctx.PostBody()), &userModel)
 	utils.JsonToStruct(string(ctx.PostBody()), &userModelMandatory)
 	err := utils.ValidateRequiredFields(userModelMandatory)
 	if err == "" {

@@ -38,35 +38,31 @@ func UpsertUser(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	var dataRole models.RoleRequest
-	if err := utils.JsonToStruct(string(ctx.Request.Body()), &dataRole); err != nil {
+	var dataUser models.UserRequest
+	if err := utils.JsonToStruct(string(ctx.Request.Body()), &dataUser); err != nil {
 		utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, "error", "Invalid JSON body")
 		return
 	}
 
 	// Validasi field wajib
-	if msg := utils.ValidateRequiredFields(dataRole); msg != "" {
+	if msg := utils.ValidateRequiredFields(dataUser); msg != "" {
 		utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, msg, "")
 		return
 	}
 
 	// Buat filter
 	var filter string
-	if dataRole.Id != "" {
-		// User kirim _id string → convert ke filter MongoDB
-		if !primitive.IsValidObjectID(dataRole.Id) {
+	if dataUser.Id != "" {
+		if !primitive.IsValidObjectID(dataUser.Id) {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, "error", "Invalid _id format")
 			return
 		}
-		// manual bikin JSON supaya tetap ObjectID
-		filter = fmt.Sprintf(`{"_id":{"$oid":"%s"}}`, dataRole.Id)
+		filter = fmt.Sprintf(`{"_id":{"$oid":"%s"}}`, dataUser.Id)
 	} else {
-		// Tidak ada _id → biarkan kosong supaya jadi insert
 		filter = `{"_id":{"$exists":false}}`
 	}
 
-	// Data untuk update/insert (hapus field _id agar tidak overwrite)
-	removedId := utils.RemoveField(dataRole, "_id")
+	removedId := utils.RemoveField(dataUser, "_id")
 	data := utils.StructToJson(removedId)
 
 	// Debug log
@@ -85,7 +81,6 @@ func UpsertUser(ctx *fasthttp.RequestCtx) {
 	if resUpsert == nil {
 		utils.ShowResponseDefault(ctx, code, "error", err)
 	} else {
-		// Response jangan diubah
 		utils.ShowResponseJson(ctx, code, "success", resUpsert)
 	}
 }
@@ -164,7 +159,6 @@ func UpsertRole(ctx *fasthttp.RequestCtx) {
 	if resUpsert == nil {
 		utils.ShowResponseDefault(ctx, code, "error", err)
 	} else {
-		// Response jangan diubah
 		utils.ShowResponseJson(ctx, code, "success", resUpsert)
 	}
 }
