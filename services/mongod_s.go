@@ -486,47 +486,51 @@ func FindOneRootDBUsingURI(uri string, dbname string, collectionName string, que
 func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq models.LoginRequest) {
 	// pipeline := `[{"$match":{"$or":[{"username":"` + usernameDecrypted + `"},{"contact.mobile":"` + config.DecryptAES(loginReq.Mobile) + `"}]}},{"$lookup":{"from":"` + consts.Coll_Companies + `","localField":"idcompany","foreignField":"_id","as":"company"}},{"$unwind":{"path":"$company","preserveNullAndEmptyArrays":true}}]`
 	pipeline := `[
-	{
-		"$match": {
-		"$or": [
-			{ "username": "` + usernameDecrypted + `" },
-			{ "contact.mobile": "` + config.DecryptAES(loginReq.Mobile) + `" }
-		]
+		{
+			"$match": {
+				"$or": [
+					{ "username": "` + usernameDecrypted + `" },
+					{ "contact.mobile": "` + config.DecryptAES(loginReq.Mobile) + `" }
+				]
+			}
+		},
+		{
+			"$lookup": {
+				"from": "` + consts.Coll_Companies + `",
+				"localField": "idcompany",
+				"foreignField": "_id",
+				"as": "company"
+			}
+		},
+		{
+			"$unwind": {
+				"path": "$company",
+				"preserveNullAndEmptyArrays": true
+			}
+		},
+		{
+			"$lookup": {
+				"from": "` + consts.Coll_Role + `",
+				"let": { "idroleStr": "$idrole" },
+				"pipeline": [
+					{
+						"$match": {
+							"$expr": { "$eq": ["$_id", { "$toObjectId": "$$idroleStr" }] }
+						}
+					}
+				],
+				"as": "role"
+			}
+		},
+		{
+			"$unwind": {
+				"path": "$role",
+				"preserveNullAndEmptyArrays": true
+			}
+		},
+		{
+			"$unset": ["company.roles"]
 		}
-	},
-	{
-		"$lookup": {
-		"from": "` + consts.Coll_Companies + `",
-		"localField": "idcompany",
-		"foreignField": "_id",
-		"as": "company"
-		}
-	},
-	{
-		"$unwind": {
-		"path": "$company",
-		"preserveNullAndEmptyArrays": true
-		}
-	},
-	{
-		"$set": {
-		"role": {
-			"$arrayElemAt": [
-			{
-				"$filter": {
-				"input": "$company.roles",
-				"as": "r",
-				"cond": { "$eq": ["$$r._id", "$idrole"] }
-				}
-			},
-			0
-			]
-		}
-		}
-	},
-	{
-		"$unset": "company.roles"
-	}
 	]`
 
 	// pipeline := `[
@@ -628,7 +632,7 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 				// go services.SaveValueRedis(userData.Username, jwt, strconv.FormatInt(expTime, 10))
 
 				go SaveValueRedis(dataLogin.Username+"_refreshtoken", jwt1Day, strconv.FormatInt(expTime1Day, 10))
-
+				print(res)
 				utils.ShowResponseJson(ctx, fasthttp.StatusOK, "success", models.LoginResponse{
 					Username:     securedUserData.Username,
 					IdUser:       config.EncryptAES(dataLogin.Id),
@@ -811,9 +815,9 @@ func UpdateOneUsingURI(uri string, dbname string, collectionName string, query s
 	}
 
 	// Optional decrypt untuk collection user
-	if collectionName == consts.Coll_Users {
-		updateFields = decryptUserColl(updateFields)
-	}
+	// if collectionName == consts.Coll_Users {
+	// 	updateFields = decryptUserColl(updateFields)
+	// }
 
 	updateDoc := bson.M{"$set": updateFields}
 	opts := options.Update().SetUpsert(upsert)

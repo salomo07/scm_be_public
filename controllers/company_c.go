@@ -120,7 +120,7 @@ func createCompanyDB(ctx *fasthttp.RequestCtx, creddbRoot models.CredDB, dbName 
 					// Memanggil fungsi UpdateDocument company, menambahkan cred & nonce
 					var defaultRole models.Role
 					utils.JsonToStruct(consts.Default_Role_Company_Json, &defaultRole)
-					userOwner.Id = "admin_" + dbName
+					// userOwner.Id = "admin_" + dbName
 					userOwner.AppId = consts.APP_ID
 					// userOwner.Name = config.DecryptAES(userOwner.Name)
 					// userOwner.Username = config.DecryptAES(userOwner.Username)

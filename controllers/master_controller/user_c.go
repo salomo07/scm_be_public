@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func FindUsers(ctx *fasthttp.RequestCtx) { //querynya menggunakan "_id"
+func FindUsers(ctx *fasthttp.RequestCtx) {
 	if string(ctx.Request.Body()) == "" {
 		utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, "warning", consts.EmptyBody)
 		return
@@ -32,6 +32,59 @@ func FindUsers(ctx *fasthttp.RequestCtx) { //querynya menggunakan "_id"
 		}
 	}
 }
+
+// func UpsertUser(ctx *fasthttp.RequestCtx) {
+// 	if len(ctx.Request.Body()) == 0 {
+// 		utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, "warning", consts.EmptyBody)
+// 		return
+// 	}
+
+// 	var dataUser models.UserRequest
+// 	if err := utils.JsonToStruct(string(ctx.Request.Body()), &dataUser); err != nil {
+// 		utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, "error", "Invalid JSON body")
+// 		return
+// 	}
+
+// 	// Validasi field wajib
+// 	if msg := utils.ValidateRequiredFields(dataUser); msg != "" {
+// 		utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, msg, "")
+// 		return
+// 	}
+
+// 	// Buat filter
+// 	var filter string
+// 	if dataUser.Id != "" {
+// 		if !primitive.IsValidObjectID(dataUser.Id) {
+// 			utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, "error", "Invalid _id format")
+// 			return
+// 		}
+// 		filter = fmt.Sprintf(`{"_id":{"$oid":"%s"}}`, dataUser.Id)
+// 	} else {
+// 		filter = `{"_id":{"$exists":false}}`
+// 	}
+
+// 	removedId := utils.RemoveField(dataUser, "_id")
+// 	data := utils.StructToJson(removedId)
+
+// 	// Debug log
+// 	fmt.Println("FILTER JSON:", filter)
+// 	fmt.Println("DATA JSON:", data)
+
+// 	credRoot := utils.GetMongoDBRoot()
+// 	resUpsert, err, code := services.UpdateOneUsingURI(
+// 		services.GetURI(credRoot), consts.DB_CORE_NAME,
+// 		consts.Coll_Users,
+// 		filter,
+// 		data,
+// 		true,
+// 	)
+
+//		if resUpsert == nil {
+//			utils.ShowResponseDefault(ctx, code, "error", err)
+//		} else {
+//			utils.ShowResponseJson(ctx, code, "success", resUpsert)
+//		}
+//	}
 func UpsertUser(ctx *fasthttp.RequestCtx) {
 	if len(ctx.Request.Body()) == 0 {
 		utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, "warning", consts.EmptyBody)
@@ -53,15 +106,19 @@ func UpsertUser(ctx *fasthttp.RequestCtx) {
 	// Buat filter
 	var filter string
 	if dataUser.Id != "" {
+		// User kirim _id string → convert ke filter MongoDB
 		if !primitive.IsValidObjectID(dataUser.Id) {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, "error", "Invalid _id format")
 			return
 		}
+		// manual bikin JSON supaya tetap ObjectID
 		filter = fmt.Sprintf(`{"_id":{"$oid":"%s"}}`, dataUser.Id)
 	} else {
+		// Tidak ada _id → biarkan kosong supaya jadi insert
 		filter = `{"_id":{"$exists":false}}`
 	}
 
+	// Data untuk update/insert (hapus field _id agar tidak overwrite)
 	removedId := utils.RemoveField(dataUser, "_id")
 	data := utils.StructToJson(removedId)
 
@@ -84,7 +141,6 @@ func UpsertUser(ctx *fasthttp.RequestCtx) {
 		utils.ShowResponseJson(ctx, code, "success", resUpsert)
 	}
 }
-
 func FindRoles(ctx *fasthttp.RequestCtx) { //querynya menggunakan "_id"
 	if string(ctx.Request.Body()) == "" {
 		utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, "warning", consts.EmptyBody)
