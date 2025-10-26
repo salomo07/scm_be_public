@@ -617,7 +617,6 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 					IdCompany: config.EncodingBase64(dataLogin.IdCompany),
 					IdBranch:  config.EncodingBase64(dataLogin.IdBranch),
 					IdRole:    config.EncodingBase64(dataLogin.IdRole),
-					Role:      dataLogin.Role,
 				}
 				jwt := utils.GenerateJWT(securedUserData, expTime)
 				jwt1Day := utils.GenerateJWT(securedUserData, expTime1Day)
@@ -639,7 +638,7 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 					IdCompany:    config.EncryptAES(dataLogin.IdCompany),
 					Fullname:     securedUserData.Name,
 					RoleName:     securedUserData.Role.Name,
-					Access:       nil,
+					Access:       dataLogin.Role.AccessMenu,
 					Token:        jwt,
 					RefreshToken: jwt1Day,
 					Expired:      time.Unix(expTime1Day, 0).String(),

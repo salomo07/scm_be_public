@@ -13,10 +13,11 @@ type Company struct {
 	Owner           User      `json:"owner" validate:"required"`
 }
 type Role struct {
-	Id   string `json:"_id"`
-	Name string `json:"name" validate:"required"`
-	Code string `json:"code" validate:"required"`
-	Desc string `json:"desc"`
+	Id         string       `json:"_id"`
+	Name       string       `json:"name" validate:"required"`
+	Code       string       `json:"code" validate:"required"`
+	Desc       string       `json:"desc"`
+	AccessMenu []AccessMenu `json:"accessmenu"`
 }
 type Contact struct {
 	Email    string `json:"email"` //Harus encrypt  di DB
