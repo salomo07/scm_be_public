@@ -1,7 +1,6 @@
 .env
 .envBU
 docker-compose.yml
-Dockerfile
 id_rsa
 serviceAccountKey.json
 
