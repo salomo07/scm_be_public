@@ -90,12 +90,12 @@ func AdminRouters(router *fasthttprouter.Router) {
 func accessmenu_routers(router *fasthttprouter.Router) {
 	router.POST(consts.URL_AccessMenu_Create, func(ctx *fasthttp.RequestCtx) {
 		ctx.Response.Header.Set("Content-Type", "application/json")
-		user, err, isSuperAdmin, isCompanyAdmin := controllers.CheckSession(ctx)
+		_, err, isSuperAdmin, isCompanyAdmin := controllers.CheckSession(ctx)
 		if err != "" {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusInternalServerError, "error", err)
 			return
 		} else if isSuperAdmin || isCompanyAdmin {
-			controllers.AddAccessMenu(ctx, user)
+			// controllers.AddAccessMenu(ctx, user)
 		} else {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusUnauthorized, "warning", consts.Unauthorized)
 			return
@@ -103,12 +103,12 @@ func accessmenu_routers(router *fasthttprouter.Router) {
 	})
 	router.POST(consts.URL_AccessMenu_CreateMany, func(ctx *fasthttp.RequestCtx) {
 		ctx.Response.Header.Set("Content-Type", "application/json")
-		user, err, isSuperAdmin, isCompanyAdmin := controllers.CheckSession(ctx)
+		_, err, isSuperAdmin, isCompanyAdmin := controllers.CheckSession(ctx)
 		if err != "" {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusInternalServerError, "error", err)
 			return
 		} else if isSuperAdmin || isCompanyAdmin {
-			controllers.AddAccessMenuBulk(ctx, user)
+			// controllers.AddAccessMenuBulk(ctx, user)
 		} else {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusUnauthorized, "warning", consts.Unauthorized)
 			return
@@ -129,12 +129,12 @@ func accessmenu_routers(router *fasthttprouter.Router) {
 	})
 	router.POST(consts.URL_AccessMenu_Update, func(ctx *fasthttp.RequestCtx) {
 		ctx.Response.Header.Set("Content-Type", "application/json")
-		user, err, isSuperAdmin, isCompanyAdmin := controllers.CheckSession(ctx)
+		_, err, isSuperAdmin, isCompanyAdmin := controllers.CheckSession(ctx)
 		if err != "" {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusInternalServerError, "error", err)
 			return
 		} else if isSuperAdmin || isCompanyAdmin {
-			controllers.UpdateAccessMenu(ctx, user)
+			// controllers.UpdateAccessMenu(ctx, user)
 		} else {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusUnauthorized, "warning", consts.Unauthorized)
 			return
@@ -142,12 +142,12 @@ func accessmenu_routers(router *fasthttprouter.Router) {
 	})
 	router.POST(consts.URL_AccessMenu_Delete, func(ctx *fasthttp.RequestCtx) {
 		ctx.Response.Header.Set("Content-Type", "application/json")
-		user, err, isSuperAdmin, isCompanyAdmin := controllers.CheckSession(ctx)
+		_, err, isSuperAdmin, isCompanyAdmin := controllers.CheckSession(ctx)
 		if err != "" {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusInternalServerError, "error", err)
 			return
 		} else if isSuperAdmin || isCompanyAdmin {
-			controllers.DeleteAccessMenu(ctx, user)
+			// controllers.DeleteAccessMenu(ctx, user)
 		} else {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusUnauthorized, "warning", consts.Unauthorized)
 			return

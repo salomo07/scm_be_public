@@ -166,7 +166,6 @@ func GetUserMany(ctx *fasthttp.RequestCtx, user models.User) {
 
 	utils.ShowResponseJson(ctx, fasthttp.StatusOK, "success", users)
 }
-
 func UpdateUser(ctx *fasthttp.RequestCtx, user models.User) {
 	if string(ctx.Request.Body()) == "" {
 		utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, "warning", consts.EmptyBody)
@@ -204,7 +203,7 @@ func AddRole(ctx *fasthttp.RequestCtx, user models.User) {
 	err := utils.ValidateRequiredFields(roleModel)
 	if err == "" {
 		credRoot := utils.GetMongoDBRoot()
-		query := `{"$and":[{"$or":[{"roles.name":"` + roleModel.Name + `"},{"roles.code":"` + roleModel.Code + `"}]},{"_id":"` + user.IdCompany + `"}]}`
+		query := `{"$and":[{"$or":[{"roles.name":"` + roleModel.Name + `"},{"roles.type":"` + roleModel.Type + `"}]},{"_id":"` + user.IdCompany + `"}]}`
 		res, errFind, _ := services.FindOneRootDBUsingURI(services.GetURI(credRoot), credRoot.DBName, consts.Coll_Companies, query, "", "")
 		if res == nil && errFind == "" {
 			//Jika tidak ditemukan, ambil dulu Roles yang terdapat di "companies"

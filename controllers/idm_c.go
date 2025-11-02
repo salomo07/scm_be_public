@@ -36,66 +36,6 @@ func Login(ctx *fasthttp.RequestCtx) {
 		utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, utils.ValidateRequiredFields(loginReq), "")
 	} else {
 		if loginReq.IdCompany == "" {
-			// Login pertama kali setelah user didaftar (IdCompany) kosong.
-			//Sebaliknya IdCOmpany terisi
-
-			/*
-				Jika IdCompany kosong, login langsung ke SCM_CORE menggunakan username
-				Hasil pencarian  akan mengembalikan data termasuk password,
-				maka password dari DB di lakukan CompareHashAndPasswordBcrypt,
-				jika pass valid maka kembalikan token dan secara async simpan di Redis
-			*/
-
-			//Cek session di Redis dulu, jika ada kembalikan session dengan status "islogin"
-
-			// tokenRedis, err := services.GetValueRedis(usernameDecrypted)
-			// if err != "" {
-			// 	cekLoginKeDB(usernameDecrypted, ctx, loginReq)
-			// 	// utils.ShowResponseDefault(ctx, fasthttp.StatusInternalServerError, "error", consts.FailGetSession+" "+err)
-			// 	// return
-			// } else {
-			// 	if tokenRedis == "" {
-			// 		//Cek ke DB
-			// 		cekLoginKeDB(usernameDecrypted, ctx, loginReq)
-			// 	} else {
-			// 		token, errToken := jwt.Parse(tokenRedis, func(token *jwt.Token) (interface{}, error) {
-			// 			return []byte(os.Getenv("JWT_TOKEN_SALT")), nil
-			// 		})
-			// 		print(errToken)
-			// 		if errToken != nil {
-			// 			// Karena token didalam redis sudah expired, langsung cek dari DB
-			// 			// utils.ShowResponseDefault(ctx, fasthttp.StatusNonAuthoritativeInfo, "error", errToken.Error())
-			// 			cekLoginKeDB(usernameDecrypted, ctx, loginReq)
-			// 			return
-			// 		}
-			// 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			// 			// Ambil nilai exp
-			// 			if exp, ok := claims["exp"].(float64); ok {
-			// 				if int64(exp) < time.Now().Unix() {
-			// 					fmt.Println("Token expired")
-			// 					ctx.Response.SetStatusCode(fasthttp.StatusUnauthorized)
-			// 					utils.ShowResponseDefault(ctx, fasthttp.StatusUnauthorized, "error", "Token expired")
-			// 					return
-			// 				}
-			// 				claims := token.Claims.(jwt.MapClaims)
-			// 				data := models.StructToJson(claims["data"])
-			// 				var sessionRedis models.Session
-			// 				var userData models.User
-			// 				utils.JsonToStruct(data, &sessionRedis)
-			// 				utils.JsonToStruct(data, &userData)
-			// 				println(data)
-			// 				ctx.Response.SetStatusCode(fasthttp.StatusOK)
-			// 				// accessmenu,err := GetAccessMenuForLoginResponse(ctx, config.DecryptAES(sessionRedis.IdCompany), config.DecryptAES(sessionRedis.IdRole))
-			// 				loginResJson := models.LoginResponse{IdUser: userData.Id, Fullname: userData.Name, RoleName: userData.RoleName, Username: userData.Username, IdCompany: sessionRedis.IdCompany, Access: nil, Token: tokenRedis, IsLogin: true, IsMaintenance: false, Expired: time.Unix(0, int64(exp)*int64(time.Microsecond)).Format(time.RFC3339)}
-			// 				utils.ShowResponseJson(ctx, fasthttp.StatusOK, "success", loginResJson)
-			// 			} else {
-			// 				fmt.Println("exp claim not found")
-			// 			}
-			// 		} else {
-			// 			fmt.Println("\nInvalid token")
-			// 		}
-			// 	}
-			// }
 			services.TryLoginToDB(usernameDecrypted, ctx, loginReq)
 
 		} else {
@@ -272,8 +212,7 @@ func CheckSession(ctx *fasthttp.RequestCtx) (
 	}
 
 	// Role-based flag
-	decoded := config.DecodingBase64(user.IdRole)
-	if loginResponseJWT.Role.Code == "adm" || strings.Contains(decoded, "admin") {
+	if loginResponseJWT.RoleType == "ADM" || strings.Contains(loginResponseJWT.RoleType, "ADM") {
 		return user, "", false, true
 	}
 	return user, "", false, false

@@ -15,7 +15,7 @@ type Company struct {
 type Role struct {
 	Id         string       `json:"_id"`
 	Name       string       `json:"name" validate:"required"`
-	Code       string       `json:"code" validate:"required"`
+	Type       string       `json:"type" validate:"required"`
 	Desc       string       `json:"desc"`
 	AccessMenu []AccessMenu `json:"accessmenu"`
 }
@@ -44,7 +44,7 @@ type RoleRequest struct {
 	Id         string       `json:"_id,omitempty"`
 	Name       string       `json:"name" validate:"required"`
 	IdCompany  string       `json:"idcompany" validate:"required"`
-	Code       string       `json:"code" validate:"required"`
+	Type       string       `json:"type" validate:"required"`
 	Desc       string       `json:"desc"`
 	AccessMenu []AccessMenu `json:"accessmenu"`
 }

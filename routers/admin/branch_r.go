@@ -1,9 +1,11 @@
 package admin
 
 import (
+	"scm/config"
 	"scm/consts"
 	"scm/controllers"
 	"scm/controllers/master_controller"
+	"scm/models"
 	"scm/utils"
 
 	"github.com/buaazp/fasthttprouter"
@@ -29,12 +31,14 @@ func BranchRouters(router *fasthttprouter.Router) {
 		}
 	})
 	router.POST(consts.URL_Branch_Find, func(ctx *fasthttp.RequestCtx) {
-		user, err, _, isCompanyAdmin := controllers.CheckSession(ctx)
+		user, err, _, _ := controllers.CheckSession(ctx)
+		var dataBranch models.BranchRequest
+		utils.JsonToStruct(string(ctx.Request.Body()), &dataBranch)
 		ctx.Response.Header.Set("Content-Type", "application/json")
 		if err != "" {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusInternalServerError, err, consts.AdminKeyTidakDikenali+" / terjadi error")
 			return
-		} else if isCompanyAdmin {
+		} else if config.DecryptAES(user.IdCompany) == dataBranch.IdCompany {
 			master_controller.FindBranches(ctx, user)
 		} else {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusUnauthorized, "warning", consts.Unauthorized)

@@ -14,6 +14,7 @@ type LoginFromDB struct {
 	Password  string  `json:"password"`
 	Role      Role    `json:"role"`
 	Username  string  `json:"username"`
+	Pin       string  `json:"pin"`
 }
 type LoginResponseJWT struct {
 	Id        string  `json:"_id"`
@@ -25,8 +26,9 @@ type LoginResponseJWT struct {
 	Name      string  `json:"name"`
 	Nickname  string  `json:"nickname"`
 	NIK       string  `json:"nik"`
-	Role      Role    `json:"role"`
 	Username  string  `json:"username"`
+	RoleName  string  `json:"rolename"`
+	RoleType  string  `json:"roletype"`
 }
 type User struct {
 	Id        string  `json:"_id" validate:"required"`
@@ -39,6 +41,7 @@ type User struct {
 	IdCompany string  `json:"idcompany"`
 	IdBranch  string  `json:"idbranch"`
 	IdRole    string  `json:"idrole"`
+	Pin       string  `json:"pin"`
 	RoleName  string  `json:"rolename"`
 	Fullname  string  `json:"fullname"`
 	Contact   Contact `json:"contact" validate:"required"`

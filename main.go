@@ -24,7 +24,7 @@ var app_port = os.Getenv("APP_PORT")
 // @host localhost:8081
 // @schemes http https
 func main() {
-	print(config.EncryptAES("solideogloria"))
+	print(config.EncryptAES(config.EncryptAES("010192")))
 	// print(config.DecryptChacha20poly1305("TsI8DiAkFoiGXpgZbYJM3w7wKvBrI51OT0zWq/GEvfv9iiHce6HCGW3jXaxzfdlPFcbMZLhSsmKFyMQZQ3Wg0z4dmaLsCEZ8JioO", "lt2OQvpizbly5OhXfhYHIm1HJX5Fqtxr"),"")
 	// print(config.EncryptAES("solideogloria"))
 	// print(config.DecryptAES("1J60PTcNaoT+7PbhglQA6uxjSUvGTuS4zZ3epNAgGKX2M/Zl9BCxqAk="))

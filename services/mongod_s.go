@@ -533,55 +533,6 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 		}
 	]`
 
-	// pipeline := `[
-	// 	{
-	// 		"$match": {
-	// 		"$or": [
-	// 			{ "username": "` + usernameDecrypted + `" },
-	// 			{ "contact.mobile": "` + config.DecryptAES(loginReq.Mobile) + `" }
-	// 		]
-	// 		}
-	// 	},
-	// 	{
-	// 		"$lookup": {
-	// 		"from": "` + consts.Coll_Companies + `",
-	// 		"localField": "idcompany",
-	// 		"foreignField": "_id",
-	// 		"as": "company"
-	// 		}
-	// 	},
-	// 	{
-	// 		"$unwind": {
-	// 		"path": "$company",
-	// 		"preserveNullAndEmptyArrays": true
-	// 		}
-	// 	},
-	// 	{
-	// 		 "$lookup": {
-	// 			"from":"` + consts.Coll_Role + `",
-	// 			"let": { "idroleStr": "$idrole" },
-	// 			"pipeline": [
-	// 				{
-	// 				"$match": {
-	// 					"$expr": {
-	// 					"$eq": [
-	// 						"$_id",
-	// 						{ "$toObjectId": "$$idroleStr" }
-	// 					]
-	// 					}
-	// 				}
-	// 				}
-	// 			],
-	// 			"as": "role"
-	// 		}
-	// 	},
-	// 	{
-	// 		"$unwind": {
-	// 		"path": "$role",
-	// 		"preserveNullAndEmptyArrays": true
-	// 		}
-	// 	}
-	// ]`
 	print(pipeline)
 	res, err, code := AggregationOneUsingURI(GetURI(utils.GetMongoDBRoot()), consts.DB_CORE_NAME, consts.Coll_Users, pipeline)
 	if err != "" {
@@ -617,6 +568,8 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 					IdCompany: config.EncodingBase64(dataLogin.IdCompany),
 					IdBranch:  config.EncodingBase64(dataLogin.IdBranch),
 					IdRole:    config.EncodingBase64(dataLogin.IdRole),
+					RoleName:  dataLogin.Role.Name,
+					RoleType:  dataLogin.Role.Type,
 				}
 				jwt := utils.GenerateJWT(securedUserData, expTime)
 				jwt1Day := utils.GenerateJWT(securedUserData, expTime1Day)
@@ -637,7 +590,8 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 					IdUser:       config.EncryptAES(dataLogin.Id),
 					IdCompany:    config.EncryptAES(dataLogin.IdCompany),
 					Fullname:     securedUserData.Name,
-					RoleName:     securedUserData.Role.Name,
+					RoleName:     securedUserData.RoleName,
+					RoleType:     securedUserData.RoleType,
 					Access:       dataLogin.Role.AccessMenu,
 					Token:        jwt,
 					RefreshToken: jwt1Day,
