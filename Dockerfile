@@ -5,7 +5,6 @@ WORKDIR /app
 # Copy go.mod dan go.sum sebelum kode lainnya untuk memanfaatkan layer cache
 # RUN go mod download
 COPY go.mod go.sum ./
-COPY .env /root/.env
 
 # Copy semua kode setelah dependensi terunduh
 COPY . .
