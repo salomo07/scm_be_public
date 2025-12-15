@@ -20,7 +20,6 @@ func AdminRouters(router *fasthttprouter.Router) {
 	print("--ADMIN Router--\n")
 	admin.UserRouters(router)
 	admin.CompanyRouters(router)
-	admin.BranchRouters(router)
 	admin.RolesRouters(router)
 	admin.ProductRouters(router)
 	injectToDB(router)

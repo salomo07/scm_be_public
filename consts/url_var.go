@@ -7,6 +7,7 @@ var URL_Auth_Login = "/api/v1/auth/login"
 var URL_Auth_Logout = "/api/v1/auth/logout"
 var URL_Auth_Enc = "/api/v1/auth/encryptaes"
 var URL_Auth_Dec = "/api/v1/auth/decryptaes"
+var URL_Auth_RefreshToken = "/api/v1/auth/refresh"
 
 // SuperAdmin - Company URL
 var company = "/api/v1/admin/company/"
@@ -14,10 +15,10 @@ var URL_Company_Create = company + "create/"
 var URL_Company_Role_Create = company + "role/addrole"
 var URL_Company_Initiate = company + "copyinitiatedata"
 
-var URL_Branch_Create = company + "branch/create"
-var URL_Branch_Find = company + "branch/find"
-var URL_Branch_Upsert = company + "branch/upsert"
-var URL_Branch_Delete = company + "branch/delete"
+var URL_Branch_Create = "/api/v1/branch/create"
+var URL_Branch_Find = "/api/v1/branch/find"
+var URL_Branch_Upsert = "/api/v1/branch/upsert"
+var URL_Branch_Delete = "/api/v1/branch/delete"
 
 var master = "/api/v1/master/"
 var URL_Role_Find = master + "roles/find"

@@ -12,14 +12,15 @@ import (
 )
 
 func IDM_Routers(router *fasthttprouter.Router) {
-	// router.POST(consts.URL_Req_OTP, func(ctx *fasthttp.RequestCtx) {
-	// 	ctx.Response.Header.Set("Content-Type", "application/json")
-	// 	controllers.RequestOTP(ctx)
-	// })
+	print("\n -IDM\n")
+	print(consts.URL_Auth_Login + "\n")
+	print(consts.URL_Auth_Logout + "\n")
+	print(consts.URL_Auth_Enc + "\n")
 	router.POST(consts.URL_Auth_Login, func(ctx *fasthttp.RequestCtx) {
 		ctx.Response.Header.Set("Content-Type", "application/json")
 		controllers.Login(ctx)
 	})
+
 	router.POST(consts.URL_Auth_Logout, func(ctx *fasthttp.RequestCtx) {
 		ctx.Response.Header.Set("Content-Type", "application/json")
 		controllers.Logout(ctx)
@@ -49,4 +50,27 @@ func IDM_Routers(router *fasthttprouter.Router) {
 		ctx.Response.Header.Set("Content-Type", "application/json")
 		fmt.Fprintf(ctx, `[{"id":1,"nik":"10091062","jobcode":"staff","employeename":"Siganteng"},{"id":2,"nik":"10091063","jobcode":"am","employeename":"Sicakep"}]`)
 	})
+
+	// router.POST(consts.URL_Auth_RefreshToken, func(ctx *fasthttp.RequestCtx) {
+	// 	refreshToken := string(ctx.Request.Header.Cookie("refresh_token"))
+
+	// 	if refreshToken == "" {
+	// 		utils.ShowResponseDefault(ctx, fasthttp.StatusUnauthorized, "error", "No refresh token")
+	// 		return
+	// 	}
+
+	// 	// Verify refresh token
+	// 	claims, err := jwt.VerifyRefreshToken(refreshToken)
+	// 	if err != nil {
+	// 		utils.ShowResponseDefault(ctx, fasthttp.StatusUnauthorized, "error", "Invalid refresh token")
+	// 		return
+	// 	}
+
+	// 	// Generate new access token
+	// 	newAccessToken, _ := jwt.GenerateAccessToken(claims.Data)
+
+	// 	utils.ShowResponseDefault(ctx, fasthttp.StatusOK, "success", map[string]string{
+	// 		"access_token": newAccessToken,
+	// 	})
+	// })
 }

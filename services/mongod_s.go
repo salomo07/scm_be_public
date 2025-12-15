@@ -697,10 +697,7 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 		{
 			"$unset": ["app", "role.accessmenu", "company.roles"]
 		}
-	]
-
-
-`
+	]`
 
 	print(pipeline)
 	res, err, code := AggregationOneUsingURI(GetURI(utils.GetMongoDBRoot()), consts.DB_CORE_NAME, consts.Coll_Users, pipeline)
