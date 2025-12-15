@@ -4,7 +4,6 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	"io/ioutil"
 	"log"
 	"os"
 	"scm/config"
@@ -41,16 +40,6 @@ func GenerateJWT(payload interface{}, expiredTime int64) string {
 		privateKey, err = x509.ParsePKCS1PrivateKey(block.Bytes)
 		if err != nil {
 			log.Fatal("Error parsing PRIVATEKEYFILE:", err)
-		}
-	} else {
-		// 2️⃣ Fallback ke file private.key
-		privKeyData, err := ioutil.ReadFile("private.key")
-		if err != nil {
-			log.Fatal("Error reading private key file:", err)
-		}
-		privateKey, err = jwt.ParseRSAPrivateKeyFromPEM(privKeyData)
-		if err != nil {
-			log.Fatal("Error parsing private key from file:", err)
 		}
 	}
 
