@@ -68,24 +68,39 @@ func ReadFileToString(filepath string) string {
 	jsonString := string(content)
 	return jsonString
 }
-func GenerateRSAPrivatePublicKey() {
+func GenerateRSAPrivatePublicKey() (*rsa.PrivateKey, crypto.PublicKey) {
 	bitSize := 2048
 
-	// Generate private key
-	privateKey, err := rsa.GenerateKey(rand.Reader, bitSize)
+	var privateKey *rsa.PrivateKey
+	var publicKey crypto.PublicKey
+
+	// 1️⃣ Cek env variable PRIVATEKEYFILE dulu
+	keyStr := os.Getenv("PRIVATEKEYFILE")
+	if keyStr != "" {
+		block, _ := pem.Decode([]byte(keyStr))
+		if block == nil || block.Type != "RSA PRIVATE KEY" {
+			log.Fatal("Failed to decode PRIVATEKEYFILE PEM block")
+		}
+		privKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+		if err != nil {
+			log.Fatal(err)
+		}
+		privateKey = privKey
+		publicKey = &privKey.PublicKey
+		fmt.Println("✔ Loaded private/public key from env")
+		return privateKey, publicKey
+	}
+
+	// 2️⃣ Kalau env tidak ada, generate baru
+	privKey, err := rsa.GenerateKey(rand.Reader, bitSize)
 	if err != nil {
 		fmt.Println("Error generating key:", err)
-		return
+		return nil, nil
 	}
+	privateKey = privKey
+	publicKey = &privKey.PublicKey
 
-	// Simpan private key ke file
-	privateFile, err := os.Create("private.key")
-	if err != nil {
-		fmt.Println("Error creating private.key:", err)
-		return
-	}
-	defer privateFile.Close()
-
+	// 3️⃣ Encode ke PEM di memory
 	privateKeyPEM := pem.EncodeToMemory(
 		&pem.Block{
 			Type:  "RSA PRIVATE KEY",
@@ -93,21 +108,10 @@ func GenerateRSAPrivatePublicKey() {
 		},
 	)
 
-	privateFile.Write(privateKeyPEM)
-	fmt.Println("✔ private.key generated")
-
-	// Simpan public key ke file
-	publicFile, err := os.Create("public.key")
-	if err != nil {
-		fmt.Println("Error creating public.key:", err)
-		return
-	}
-	defer publicFile.Close()
-
-	pubASN1, err := x509.MarshalPKIXPublicKey(&privateKey.PublicKey)
+	pubASN1, err := x509.MarshalPKIXPublicKey(publicKey)
 	if err != nil {
 		fmt.Println("Error marshalling public key:", err)
-		return
+		return nil, nil
 	}
 
 	publicKeyPEM := pem.EncodeToMemory(
@@ -117,8 +121,17 @@ func GenerateRSAPrivatePublicKey() {
 		},
 	)
 
-	publicFile.Write(publicKeyPEM)
-	fmt.Println("✔ public.key generated")
+	// 4️⃣ Optional: tulis ke file kalau mau (bisa dihapus)
+	err = os.WriteFile("private.key", privateKeyPEM, 0600)
+	if err == nil {
+		fmt.Println("✔ private.key generated")
+	}
+	err = os.WriteFile("public.key", publicKeyPEM, 0644)
+	if err == nil {
+		fmt.Println("✔ public.key generated")
+	}
+
+	return privateKey, publicKey
 }
 
 func LoadPrivateKey() *rsa.PrivateKey {
