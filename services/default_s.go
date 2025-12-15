@@ -71,10 +71,7 @@ func ReadFileToString(filepath string) string {
 func GenerateRSAPrivatePublicKey() (*rsa.PrivateKey, crypto.PublicKey) {
 	bitSize := 2048
 
-	var privateKey *rsa.PrivateKey
-	var publicKey crypto.PublicKey
-
-	// 1️⃣ Cek env variable PRIVATEKEYFILE dulu
+	// Cek env variable PRIVATEKEYFILE
 	keyStr := os.Getenv("PRIVATEKEYFILE")
 	if keyStr != "" {
 		block, _ := pem.Decode([]byte(keyStr))
@@ -85,105 +82,16 @@ func GenerateRSAPrivatePublicKey() (*rsa.PrivateKey, crypto.PublicKey) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		privateKey = privKey
-		publicKey = &privKey.PublicKey
 		fmt.Println("✔ Loaded private/public key from env")
-		return privateKey, publicKey
+		return privKey, &privKey.PublicKey
 	}
 
-	// 2️⃣ Kalau env tidak ada, generate baru
-	privKey, err := rsa.GenerateKey(rand.Reader, bitSize)
+	// Generate baru
+	privateKey, err := rsa.GenerateKey(rand.Reader, bitSize)
 	if err != nil {
-		fmt.Println("Error generating key:", err)
-		return nil, nil
+		log.Fatal("Error generating key:", err)
 	}
-	privateKey = privKey
-	publicKey = &privKey.PublicKey
+	fmt.Println("✔ Generated new private/public key in memory")
 
-	// 3️⃣ Encode ke PEM di memory
-	privateKeyPEM := pem.EncodeToMemory(
-		&pem.Block{
-			Type:  "RSA PRIVATE KEY",
-			Bytes: x509.MarshalPKCS1PrivateKey(privateKey),
-		},
-	)
-
-	pubASN1, err := x509.MarshalPKIXPublicKey(publicKey)
-	if err != nil {
-		fmt.Println("Error marshalling public key:", err)
-		return nil, nil
-	}
-
-	publicKeyPEM := pem.EncodeToMemory(
-		&pem.Block{
-			Type:  "PUBLIC KEY",
-			Bytes: pubASN1,
-		},
-	)
-
-	// 4️⃣ Optional: tulis ke file kalau mau (bisa dihapus)
-	err = os.WriteFile("private.key", privateKeyPEM, 0600)
-	if err == nil {
-		fmt.Println("✔ private.key generated")
-	}
-	err = os.WriteFile("public.key", publicKeyPEM, 0644)
-	if err == nil {
-		fmt.Println("✔ public.key generated")
-	}
-
-	return privateKey, publicKey
-}
-
-func LoadPrivateKey() *rsa.PrivateKey {
-	// Cek environment variable dulu
-	keyStr := os.Getenv("PRIVATEKEYFILE")
-	if keyStr != "" {
-		block, _ := pem.Decode([]byte(keyStr))
-		if block == nil || block.Type != "RSA PRIVATE KEY" {
-			log.Fatal("Failed to decode PRIVATEKEYFILE PEM block")
-		}
-		privKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
-		if err != nil {
-			log.Fatal(err)
-		}
-		return privKey
-	}
-
-	// Kalau env kosong, fallback ke file
-	keyData, err := os.ReadFile("private.key")
-	if err != nil {
-		log.Fatal("private.key file not found and PRIVATEKEYFILE env not set")
-	}
-	block, _ := pem.Decode(keyData)
-	privKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return privKey
-}
-
-func LoadPublicKey() crypto.PublicKey {
-	keyStr := os.Getenv("PUBLICKEYFILE")
-	if keyStr != "" {
-		block, _ := pem.Decode([]byte(keyStr))
-		if block == nil || block.Type != "PUBLIC KEY" {
-			log.Fatal("Failed to decode PUBLICKEYFILE PEM block")
-		}
-		pubKey, err := x509.ParsePKIXPublicKey(block.Bytes)
-		if err != nil {
-			log.Fatal(err)
-		}
-		return pubKey
-	}
-
-	keyData, err := os.ReadFile("public.key")
-	if err != nil {
-		log.Fatal("public.key file not found and PUBLICKEYFILE env not set")
-	}
-	block, _ := pem.Decode(keyData)
-	pubKey, err := x509.ParsePKIXPublicKey(block.Bytes)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return pubKey
+	return privateKey, &privateKey.PublicKey
 }
