@@ -38,7 +38,7 @@ func BranchRouters(router *fasthttprouter.Router) {
 		if err != "" {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusInternalServerError, err, consts.AdminKeyTidakDikenali+" / terjadi error")
 			return
-		} else if config.DecryptAES(user.IdCompany) == dataBranch.IdCompany {
+		} else if config.DecodingBase64(user.IdCompany) == dataBranch.IdCompany {
 			master_controller.FindBranches(ctx, user)
 		} else {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusUnauthorized, "warning", consts.Unauthorized)

@@ -2,20 +2,18 @@ package models
 
 type Menu struct {
 	Id      string    `json:"_id" validate:"required"`
-	AppId   string    `json:"appid" validate:"required"`
 	Name    string    `json:"name" validate:"required"`
-	Code    string    `json:"code" validate:"required"`
 	Url     string    `json:"url" validate:"required"`
 	Icon    string    `json:"icon"`
 	Desc    string    `json:"desc"`
 	Submenu []Submenu `json:"submenu"`
 }
 type Submenu struct {
-	IdSubmenu int    `json:"idsubmenu" validate:"required"`
-	Name      string `json:"name" validate:"required"`
-	Url       string `json:"url"`
-	Icon      string `json:"icon"`
-	Desc      string `json:"desc"`
+	Id   string `json:"_id" validate:"required"`
+	Name string `json:"name" validate:"required"`
+	Url  string `json:"url"`
+	Icon string `json:"icon"`
+	Desc string `json:"desc"`
 }
 
 type AccessMenu struct {

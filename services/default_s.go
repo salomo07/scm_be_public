@@ -1,6 +1,7 @@
 package services
 
 import (
+	"crypto"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
@@ -118,4 +119,58 @@ func GenerateRSAPrivatePublicKey() {
 
 	publicFile.Write(publicKeyPEM)
 	fmt.Println("✔ public.key generated")
+}
+
+func LoadPrivateKey() *rsa.PrivateKey {
+	// Cek environment variable dulu
+	keyStr := os.Getenv("PRIVATEKEYFILE")
+	if keyStr != "" {
+		block, _ := pem.Decode([]byte(keyStr))
+		if block == nil || block.Type != "RSA PRIVATE KEY" {
+			log.Fatal("Failed to decode PRIVATEKEYFILE PEM block")
+		}
+		privKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+		if err != nil {
+			log.Fatal(err)
+		}
+		return privKey
+	}
+
+	// Kalau env kosong, fallback ke file
+	keyData, err := os.ReadFile("private.key")
+	if err != nil {
+		log.Fatal("private.key file not found and PRIVATEKEYFILE env not set")
+	}
+	block, _ := pem.Decode(keyData)
+	privKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return privKey
+}
+
+func LoadPublicKey() crypto.PublicKey {
+	keyStr := os.Getenv("PUBLICKEYFILE")
+	if keyStr != "" {
+		block, _ := pem.Decode([]byte(keyStr))
+		if block == nil || block.Type != "PUBLIC KEY" {
+			log.Fatal("Failed to decode PUBLICKEYFILE PEM block")
+		}
+		pubKey, err := x509.ParsePKIXPublicKey(block.Bytes)
+		if err != nil {
+			log.Fatal(err)
+		}
+		return pubKey
+	}
+
+	keyData, err := os.ReadFile("public.key")
+	if err != nil {
+		log.Fatal("public.key file not found and PUBLICKEYFILE env not set")
+	}
+	block, _ := pem.Decode(keyData)
+	pubKey, err := x509.ParsePKIXPublicKey(block.Bytes)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return pubKey
 }

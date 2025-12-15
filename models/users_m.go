@@ -15,6 +15,7 @@ type LoginFromDB struct {
 	Role      Role    `json:"role"`
 	Username  string  `json:"username"`
 	Pin       string  `json:"pin"`
+	Menus     []Menu  `json:"menus"`
 }
 type LoginResponseJWT struct {
 	Id        string  `json:"_id"`

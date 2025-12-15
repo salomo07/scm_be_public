@@ -7,6 +7,8 @@ var APP_ID = "scm_app"
 var ISSUER_ID = "Salomo07"
 
 var DB_CORE_NAME = "scm_core"
+
+var Coll_Apps = "app"
 var Coll_Initiate = "initiate"
 var Coll_Users = "users"
 var Coll_Companies = "companies"

@@ -485,53 +485,222 @@ func FindOneRootDBUsingURI(uri string, dbname string, collectionName string, que
 
 func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq models.LoginRequest) {
 	// pipeline := `[{"$match":{"$or":[{"username":"` + usernameDecrypted + `"},{"contact.mobile":"` + config.DecryptAES(loginReq.Mobile) + `"}]}},{"$lookup":{"from":"` + consts.Coll_Companies + `","localField":"idcompany","foreignField":"_id","as":"company"}},{"$unwind":{"path":"$company","preserveNullAndEmptyArrays":true}}]`
-	pipeline := `[
+	pipeline := `
+	[
 		{
 			"$match": {
-				"$or": [
-					{ "username": "` + usernameDecrypted + `" },
-					{ "contact.mobile": "` + config.DecryptAES(loginReq.Mobile) + `" }
+			"$or": [
+				{ "username": "` + usernameDecrypted + `" },
+				{ "contact.mobile": "` + config.DecryptAES(loginReq.Mobile) + `" }
+			]
+			}
+		},
+		{
+			"$lookup": {
+			"from": "` + consts.Coll_Companies + ` ",
+			"localField": "idcompany",
+			"foreignField": "_id",
+			"as": "company"
+			}
+		},
+		{
+			"$unwind": {
+			"path": "$company",
+			"preserveNullAndEmptyArrays": true
+			}
+		},
+
+		{
+			"$lookup": {
+			"from": "` + consts.Coll_Role + `",
+			"let": { "idrole": "$idrole" },
+			"pipeline": [
+				{
+				"$match": {
+					"$expr": {
+					"$eq": ["$_id", { "$toObjectId": "$$idrole" }]
+					}
+				}
+				}
+			],
+			"as": "role"
+			}
+		},
+		{
+			"$unwind": {
+			"path": "$role",
+			"preserveNullAndEmptyArrays": true
+			}
+		},
+
+		{
+			"$lookup": {
+			"from": "` + consts.Coll_Apps + `",
+			"pipeline": [
+				{ "$match": { "code": "uli" } },
+				{ "$project": { "_id": 0, "menus": 1 } }
+			],
+			"as": "app"
+			}
+		},
+
+		{
+			"$addFields": {
+			"menus": {
+				"$ifNull": [
+				{ "$arrayElemAt": ["$app.menus", 0] },
+				[]
 				]
 			}
-		},
-		{
-			"$lookup": {
-				"from": "` + consts.Coll_Companies + `",
-				"localField": "idcompany",
-				"foreignField": "_id",
-				"as": "company"
 			}
 		},
+
 		{
-			"$unwind": {
-				"path": "$company",
-				"preserveNullAndEmptyArrays": true
-			}
-		},
-		{
-			"$lookup": {
-				"from": "` + consts.Coll_Role + `",
-				"let": { "idroleStr": "$idrole" },
-				"pipeline": [
+			"$addFields": {
+			"menus": {
+				"$map": {
+				"input": "$menus",
+				"as": "m",
+				"in": {
+					"$mergeObjects": [
+					"$$m",
 					{
-						"$match": {
-							"$expr": { "$eq": ["$_id", { "$toObjectId": "$$idroleStr" }] }
+						"submenu": {
+						"$cond": [
+							{ "$isArray": "$$m.submenu" },
+							"$$m.submenu",
+							[]
+						]
 						}
 					}
-				],
-				"as": "role"
+					]
+				}
+				}
+			}
 			}
 		},
 		{
-			"$unwind": {
-				"path": "$role",
-				"preserveNullAndEmptyArrays": true
+			"$addFields": {
+			"menus": {
+				"$map": {
+				"input": {
+					"$filter": {
+					"input": "$menus",
+					"as": "m",
+					"cond": {
+						"$in": [
+						"$$m._id",
+						{
+							"$map": {
+							"input": "$role.accessmenu",
+							"as": "am",
+							"in": "$$am.idmenu"
+							}
+						}
+						]
+					}
+					}
+				},
+				"as": "m",
+				"in": {
+					"$let": {
+					"vars": {
+						"access": {
+						"$arrayElemAt": [
+							{
+							"$filter": {
+								"input": "$role.accessmenu",
+								"as": "am",
+								"cond": {
+								"$eq": ["$$am.idmenu", "$$m._id"]
+								}
+							}
+							},
+							0
+						]
+						}
+					},
+					"in": {
+						"_id": "$$m._id",
+						"name": "$$m.name",
+						"url": "$$m.url",
+						"icon": "$$m.icon",
+						"desc": "$$m.desc",
+						"create": "$$access.create",
+						"read": "$$access.read",
+						"update": "$$access.update",
+						"delete": "$$access.delete",
+						"submenu": {
+						"$map": {
+							"input": {
+							"$filter": {
+								"input": "$$m.submenu",
+								"as": "sm",
+								"cond": {
+								"$in": [
+									"$$sm._id",
+									{
+									"$map": {
+										"input": "$$access.accesssubmenu",
+										"as": "asm",
+										"in": "$$asm.idsubmenu"
+									}
+									}
+								]
+								}
+							}
+							},
+							"as": "sm",
+							"in": {
+							"$let": {
+								"vars": {
+								"subAccess": {
+									"$arrayElemAt": [
+									{
+										"$filter": {
+										"input": "$$access.accesssubmenu",
+										"as": "asm",
+										"cond": {
+											"$eq": [
+											"$$asm.idsubmenu",
+											"$$sm._id"
+											]
+										}
+										}
+									},
+									0
+									]
+								}
+								},
+								"in": {
+								"_id": "$$sm._id",
+								"name": "$$sm.name",
+								"url": "$$sm.url",
+								"icon": "$$sm.icon",
+								"desc": "$$sm.desc",
+								"create": "$$subAccess.create",
+								"read": "$$subAccess.read",
+								"update": "$$subAccess.update",
+								"delete": "$$subAccess.delete"
+								}
+							}
+							}
+						}
+						}
+					}
+					}
+				}
+				}
+			}
 			}
 		},
 		{
-			"$unset": ["company.roles"]
+			"$unset": ["app", "role.accessmenu", "company.roles"]
 		}
-	]`
+	]
+
+
+`
 
 	print(pipeline)
 	res, err, code := AggregationOneUsingURI(GetURI(utils.GetMongoDBRoot()), consts.DB_CORE_NAME, consts.Coll_Users, pipeline)
@@ -561,13 +730,13 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 				expTime1Day := time.Now().Local().Add(time.Duration(24) * time.Hour).Unix()
 				securedUserData := models.LoginResponseJWT{
 					AppId:     os.Getenv("APP_ID"),
-					Id:        config.EncodingBase64(dataLogin.Id),
-					NIK:       config.EncodingBase64(dataLogin.NIK),
-					Name:      config.EncodingBase64(dataLogin.Name),
-					Username:  config.EncodingBase64(dataLogin.Username),
+					Id:        dataLogin.Id,
+					NIK:       dataLogin.NIK,
+					Name:      dataLogin.Name,
+					Username:  dataLogin.Username,
 					IdCompany: config.EncodingBase64(dataLogin.IdCompany),
-					IdBranch:  config.EncodingBase64(dataLogin.IdBranch),
-					IdRole:    config.EncodingBase64(dataLogin.IdRole),
+					IdBranch:  dataLogin.IdBranch,
+					IdRole:    dataLogin.IdRole,
 					RoleName:  dataLogin.Role.Name,
 					RoleType:  dataLogin.Role.Type,
 				}
@@ -588,7 +757,7 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 				utils.ShowResponseJson(ctx, fasthttp.StatusOK, "success", models.LoginResponse{
 					Username:     securedUserData.Username,
 					IdUser:       config.EncryptAES(dataLogin.Id),
-					IdCompany:    config.EncryptAES(dataLogin.IdCompany),
+					IdCompany:    dataLogin.IdCompany,
 					Fullname:     securedUserData.Name,
 					RoleName:     securedUserData.RoleName,
 					RoleType:     securedUserData.RoleType,
@@ -596,6 +765,7 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 					Token:        jwt,
 					RefreshToken: jwt1Day,
 					Expired:      time.Unix(expTime1Day, 0).String(),
+					Menus:        dataLogin.Menus,
 				})
 			} else {
 				utils.ShowResponseDefault(ctx, fasthttp.StatusUnauthorized, consts.PasswordIncorrect, "")

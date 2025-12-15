@@ -181,7 +181,7 @@ func AddMenu(ctx *fasthttp.RequestCtx, user models.User) {
 	} else {
 
 		//check urlmenu sdh isExist g
-		res, err, _ := services.FindOneRootDBUsingURI(services.GetURI(credRoot), consts.DB_CORE_NAME, consts.Coll_Menu, `{"url":"`+menuModel.Url+`","appid":"`+menuModel.AppId+`"}`, "", "")
+		res, err, _ := services.FindOneRootDBUsingURI(services.GetURI(credRoot), consts.DB_CORE_NAME, consts.Coll_Menu, `{"url":"`+menuModel.Url+`"}`, "", "")
 		if err == "" && res == nil {
 			menuModel.Id = "m_" + strconv.FormatInt(time.Now().UnixNano()/1000, 10)
 			//JIka url tidak duplicate, maka insert
@@ -226,7 +226,7 @@ func AddMenuBulk(ctx *fasthttp.RequestCtx, user models.User) {
 				credRoot := utils.GetMongoDBRoot()
 				// Check urlmenu sdh isExist g, pengecekan 1 persatu menu. Ini berat, namun harusnya tidak masalah, karena endpoint bulk ini jarang dipakai, hanya superadmin saja.
 
-				res, err, _ := services.FindOneRootDBUsingURI(services.GetURI(credRoot), consts.DB_CORE_NAME, consts.Coll_Menu, `{"url":"`+value.Url+`","appid":"`+value.AppId+`"}`, "", "")
+				res, err, _ := services.FindOneRootDBUsingURI(services.GetURI(credRoot), consts.DB_CORE_NAME, consts.Coll_Menu, `{"url":"`+value.Url+`"}`, "", "")
 				if err == "" && res == nil {
 				} else {
 					arrayDuplicate = append(arrayDuplicate, value)

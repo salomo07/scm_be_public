@@ -57,9 +57,34 @@ type LoginResponse struct {
 	IsLogin bool `json:"islogin"`
 
 	// @description Indicates whether the system is under maintenance.
-	IsMaintenance bool `json:"ismaintenance"`
+	IsMaintenance bool   `json:"ismaintenance"`
+	Menus         []Menu `json:"menus"`
+}
+type LoginMenu struct {
+	Id      string         `json:"_id"`
+	Name    string         `json:"name"`
+	Code    string         `json:"code"`
+	Url     string         `json:"url"`
+	Icon    string         `json:"icon"`
+	Desc    string         `json:"desc"`
+	Create  *bool          `json:"create"`
+	Read    *bool          `json:"read"`
+	Update  *bool          `json:"update"`
+	Delete  *bool          `json:"delete"`
+	Submenu []LoginSubmenu `json:"submenu"`
 }
 
+type LoginSubmenu struct {
+	IdSubmenu int    `json:"idsubmenu"`
+	Name      string `json:"name"`
+	Url       string `json:"url"`
+	Icon      string `json:"icon"`
+	Desc      string `json:"desc"`
+	Create    *bool  `json:"create"`
+	Read      *bool  `json:"read"`
+	Update    *bool  `json:"update"`
+	Delete    *bool  `json:"delete"`
+}
 type OTPRequest struct {
 	UserId string `json:"user_id" validate:"required"`
 }
