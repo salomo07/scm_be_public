@@ -117,6 +117,7 @@ func DecryptChacha20poly1305(encrypted, nonce string) (resStr string, errStr str
 }
 
 func GetCredRedis() string {
+	log.Println("weeeeew", os.Getenv("REDIS_CRED_DEV"))
 	if consts.UsingRedisOnline {
 		return os.Getenv("REDIS_CRED_DEV")
 	} else {
