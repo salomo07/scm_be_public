@@ -9,6 +9,7 @@ serviceAccountKey.json
 node_modules/
 .next/
 out/
+tmp/
 dist/
 build/
 npm-debug.log*
