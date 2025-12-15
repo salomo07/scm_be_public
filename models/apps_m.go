@@ -1,5 +1,14 @@
 package models
 
+type AppInfo struct {
+	ID      string  `json:"_id"`
+	Owner   string  `json:"owner"`
+	Time    float32 `json:"time"`
+	Version string  `json:"version"`
+	Name    string  `json:"name"`
+	Code    string  `json:"code"`
+}
+
 type Menu struct {
 	Id      string    `json:"_id" validate:"required"`
 	Name    string    `json:"name" validate:"required"`

@@ -47,9 +47,6 @@ type LoginResponse struct {
 
 	RefreshToken string `json:"refresh_token"`
 
-	// @description The access menu available for the user after login, including submenus.
-	Access []AccessMenu `json:"access"`
-
 	// @description The expiration time of the generated token.
 	Expired string `json:"expired"`
 
@@ -57,8 +54,9 @@ type LoginResponse struct {
 	IsLogin bool `json:"islogin"`
 
 	// @description Indicates whether the system is under maintenance.
-	IsMaintenance bool   `json:"ismaintenance"`
-	Menus         []Menu `json:"menus"`
+	IsMaintenance bool    `json:"ismaintenance"`
+	Menus         []Menu  `json:"menus"`
+	AppInfo       AppInfo `json:"app"`
 }
 type LoginMenu struct {
 	Id      string         `json:"_id"`

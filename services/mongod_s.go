@@ -485,6 +485,7 @@ func FindOneRootDBUsingURI(uri string, dbname string, collectionName string, que
 
 func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq models.LoginRequest) {
 	// pipeline := `[{"$match":{"$or":[{"username":"` + usernameDecrypted + `"},{"contact.mobile":"` + config.DecryptAES(loginReq.Mobile) + `"}]}},{"$lookup":{"from":"` + consts.Coll_Companies + `","localField":"idcompany","foreignField":"_id","as":"company"}},{"$unwind":{"path":"$company","preserveNullAndEmptyArrays":true}}]`
+	appCode := os.Getenv("APP_CODE")
 	pipeline := `
 	[
   {
@@ -495,6 +496,7 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
       ]
     }
   },
+
   {
     "$lookup": {
       "from": "role",
@@ -511,38 +513,33 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
       "as": "role"
     }
   },
-  {
-    "$unwind": "$role"
-  },
+  { "$unwind": "$role" },
+
   {
     "$lookup": {
       "from": "app",
       "pipeline": [
-        { "$match": { "code": "uli" } },
+        { "$match": { "code": "` + appCode + `" } },
         { "$sort": { "time": -1 } },
-        { "$limit": 1 },
-        { "$project": { "_id": 0, "menus": 1 } }
+        { "$limit": 1 }
       ],
       "as": "app"
     }
   },
+
   {
     "$addFields": {
-      "menus": {
-        "$ifNull": [
-          { "$arrayElemAt": ["$app.menus", 0] },
-          []
-        ]
-      }
+      "app": { "$arrayElemAt": ["$app", 0] }
     }
   },
+
   {
     "$addFields": {
       "menus": {
         "$map": {
           "input": {
             "$filter": {
-              "input": "$menus",
+              "input": { "$ifNull": ["$app.menus", []] },
               "as": "m",
               "cond": {
                 "$in": [
@@ -568,9 +565,7 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
                       "$filter": {
                         "input": "$role.accessmenu",
                         "as": "am",
-                        "cond": {
-                          "$eq": ["$$am.idmenu", "$$m._id"]
-                        }
+                        "cond": { "$eq": ["$$am.idmenu", "$$m._id"] }
                       }
                     },
                     0
@@ -587,22 +582,19 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
                 "read": "$$access.read",
                 "update": "$$access.update",
                 "delete": "$$access.delete",
+
                 "submenu": {
                   "$map": {
                     "input": {
                       "$filter": {
-                        "input": {
-                          "$ifNull": ["$$m.submenu", []]
-                        },
+                        "input": { "$ifNull": ["$$m.submenu", []] },
                         "as": "sm",
                         "cond": {
                           "$in": [
                             "$$sm._id",
                             {
                               "$map": {
-                                "input": {
-                                  "$ifNull": ["$$access.accesssubmenu", []]
-                                },
+                                "input": { "$ifNull": ["$$access.accesssubmenu", []] },
                                 "as": "asm",
                                 "in": "$$asm.idsubmenu"
                               }
@@ -619,15 +611,10 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
                             "$arrayElemAt": [
                               {
                                 "$filter": {
-                                  "input": {
-                                    "$ifNull": ["$$access.accesssubmenu", []]
-                                  },
+                                  "input": { "$ifNull": ["$$access.accesssubmenu", []] },
                                   "as": "asm",
                                   "cond": {
-                                    "$eq": [
-                                      "$$asm.idsubmenu",
-                                      "$$sm._id"
-                                    ]
+                                    "$eq": ["$$asm.idsubmenu", "$$sm._id"]
                                   }
                                 }
                               },
@@ -657,11 +644,14 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
       }
     }
   },
+
   {
-    "$unset": ["app", "role.accessmenu"]
+    "$unset": [
+      "app.menus",
+      "role.accessmenu"
+    ]
   }
 ]
-
 
   `
 
@@ -724,11 +714,11 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 					Fullname:     securedUserData.Name,
 					RoleName:     securedUserData.RoleName,
 					RoleType:     securedUserData.RoleType,
-					Access:       dataLogin.Role.AccessMenu,
 					Token:        jwt,
 					RefreshToken: jwt1Day,
 					Expired:      time.Unix(expTime1Day, 0).String(),
 					Menus:        dataLogin.Menus,
+					AppInfo:      dataLogin.AppInfo,
 				})
 			} else {
 				utils.ShowResponseDefault(ctx, fasthttp.StatusUnauthorized, consts.PasswordIncorrect, "")
