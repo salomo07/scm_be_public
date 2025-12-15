@@ -17,7 +17,7 @@ func BranchRouters(router *fasthttprouter.Router) {
 	log.Println("📍 POST", consts.URL_Branch_Find)
 	log.Println("📍 POST", consts.URL_Branch_Upsert)
 	log.Println("📍 POST", consts.URL_Branch_Delete)
-	log.Println("===============================================\n")
+	log.Println("\n===============================================\n")
 
 	router.POST(consts.URL_Branch_Find, func(ctx *fasthttp.RequestCtx) {
 		log.Println("✅ ===== BRANCH FIND HANDLER HIT =====")

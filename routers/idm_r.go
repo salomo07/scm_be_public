@@ -2,6 +2,7 @@ package routers
 
 import (
 	"fmt"
+	"log"
 	"scm/config"
 	"scm/consts"
 	"scm/controllers"
@@ -12,10 +13,12 @@ import (
 )
 
 func IDM_Routers(router *fasthttprouter.Router) {
-	print("\n -IDM\n")
-	print(consts.URL_Auth_Login + "\n")
-	print(consts.URL_Auth_Logout + "\n")
-	print(consts.URL_Auth_Enc + "\n")
+	log.Println("\n========== REGISTERING IDM ROUTES ==========")
+	log.Println("📍 POST", consts.URL_Auth_Login)
+	log.Println("📍 POST", consts.URL_Auth_Logout)
+	log.Println("📍 POST", consts.URL_Auth_Enc)
+	log.Println("\n============================================\n")
+
 	router.POST(consts.URL_Auth_Login, func(ctx *fasthttp.RequestCtx) {
 		ctx.Response.Header.Set("Content-Type", "application/json")
 		controllers.Login(ctx)
