@@ -1,6 +1,9 @@
 package utils
 
 import (
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
 	"io/ioutil"
 	"log"
 	"os"
@@ -25,14 +28,30 @@ func GenerateSuperAdminToken() {
 	print("\n+++++++++++++\n")
 }
 func GenerateJWT(payload interface{}, expiredTime int64) string {
-	// Load private key
-	privKeyData, err := ioutil.ReadFile("private.key")
-	if err != nil {
-		log.Fatal("Error reading private key file:", err)
-	}
-	privateKey, err := jwt.ParseRSAPrivateKeyFromPEM(privKeyData)
-	if err != nil {
-		log.Fatal("Error parsing private key:", err)
+	var privateKey *rsa.PrivateKey
+	var err error
+
+	// 1️⃣ Cek env variable PRIVATEKEYFILE dulu
+	keyStr := os.Getenv("PRIVATEKEYFILE")
+	if keyStr != "" {
+		block, _ := pem.Decode([]byte(keyStr))
+		if block == nil || block.Type != "RSA PRIVATE KEY" {
+			log.Fatal("Failed to decode PRIVATEKEYFILE PEM block")
+		}
+		privateKey, err = x509.ParsePKCS1PrivateKey(block.Bytes)
+		if err != nil {
+			log.Fatal("Error parsing PRIVATEKEYFILE:", err)
+		}
+	} else {
+		// 2️⃣ Fallback ke file private.key
+		privKeyData, err := ioutil.ReadFile("private.key")
+		if err != nil {
+			log.Fatal("Error reading private key file:", err)
+		}
+		privateKey, err = jwt.ParseRSAPrivateKeyFromPEM(privKeyData)
+		if err != nil {
+			log.Fatal("Error parsing private key from file:", err)
+		}
 	}
 
 	claims := Claims{
@@ -45,7 +64,6 @@ func GenerateJWT(payload interface{}, expiredTime int64) string {
 		},
 	}
 
-	// Buat token pakai RS256
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 	signedToken, err := token.SignedString(privateKey)
 	if err != nil {
