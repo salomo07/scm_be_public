@@ -28,6 +28,7 @@ type LoginResponseJWT struct {
 	Name      string  `json:"name"`
 	Nickname  string  `json:"nickname"`
 	NIK       string  `json:"nik"`
+	PIN       string  `json:"pin"`
 	Username  string  `json:"username"`
 	RoleName  string  `json:"rolename"`
 	RoleType  string  `json:"roletype"`

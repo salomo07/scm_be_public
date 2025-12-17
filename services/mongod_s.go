@@ -692,6 +692,7 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 					IdRole:    dataLogin.IdRole,
 					RoleName:  dataLogin.Role.Name,
 					RoleType:  dataLogin.Role.Type,
+					PIN:       dataLogin.Pin,
 				}
 				jwt := utils.GenerateJWT(securedUserData, expTime)
 				jwt1Day := utils.GenerateJWT(securedUserData, expTime1Day)
