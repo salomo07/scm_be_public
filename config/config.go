@@ -12,16 +12,20 @@ import (
 	"os"
 	"scm/consts"
 
+	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/crypto/chacha20poly1305"
 )
 
 func init() {
-	// er := godotenv.Load()
-	// if er != nil {
-	// 	print(er.Error())
-	// 	panic("Fail to load .env file")
-	// }
+	if true {
+		er := godotenv.Load()
+		if er != nil {
+			print(er.Error())
+			panic("Fail to load .env file")
+		}
+	}
+
 	consts.APP_ID = os.Getenv("APP_ID")
 	consts.ISSUER_ID = os.Getenv("ISSUER_ID")
 }

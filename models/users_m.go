@@ -1,22 +1,22 @@
 package models
 
 type LoginFromDB struct {
-	Id        string  `json:"_id"`
-	AppId     string  `json:"appid"`
-	Company   Company `json:"company"`
-	Contact   Contact `json:"contact"`
-	IdCompany string  `json:"idcompany"`
-	IdBranch  string  `json:"idbranch"`
-	IdRole    string  `json:"idrole"`
-	Name      string  `json:"name"`
-	Nickname  string  `json:"nickname"`
-	NIK       string  `json:"nik"`
-	Password  string  `json:"password"`
-	Role      Role    `json:"role"`
-	Username  string  `json:"username"`
-	Pin       string  `json:"pin"`
-	Menus     []Menu  `json:"menus"`
-	AppInfo   AppInfo `json:"app"`
+	Id        string         `json:"_id"`
+	AppId     string         `json:"appid"`
+	Company   Company        `json:"company"`
+	Contact   Contact        `json:"contact"`
+	IdCompany string         `json:"idcompany"`
+	IdBranch  string         `json:"idbranch"`
+	IdRole    string         `json:"idrole"`
+	Name      string         `json:"name"`
+	Nickname  string         `json:"nickname"`
+	NIK       string         `json:"nik"`
+	Password  string         `json:"password"`
+	Role      Role           `json:"role"`
+	Username  string         `json:"username"`
+	Pin       string         `json:"pin"`
+	Menus     []MenuForLogin `json:"menus"`
+	AppInfo   AppInfo        `json:"app"`
 }
 type LoginResponseJWT struct {
 	Id        string  `json:"_id"`

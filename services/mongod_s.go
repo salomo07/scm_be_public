@@ -488,172 +488,175 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 	appCode := os.Getenv("APP_CODE")
 	pipeline := `
 	[
-  {
-    "$match": {
-      "$or": [
-        { "username": "` + usernameDecrypted + `" },
-        { "contact.mobile": "` + config.DecryptAES(loginReq.Mobile) + `" }
-      ]
-    }
-  },
+		{
+			"$match": {
+			"$or": [
+				{ "username": "` + usernameDecrypted + `" },
+				{ "contact.mobile": "` + config.DecryptAES(loginReq.Mobile) + `" }
+			]
+			}
+		},
 
-  {
-    "$lookup": {
-      "from": "role",
-      "let": { "idrole": "$idrole" },
-      "pipeline": [
-        {
-          "$match": {
-            "$expr": {
-              "$eq": ["$_id", { "$toObjectId": "$$idrole" }]
-            }
-          }
-        }
-      ],
-      "as": "role"
-    }
-  },
-  { "$unwind": "$role" },
+		{
+			"$lookup": {
+			"from": "role",
+			"let": { "idrole": "$idrole" },
+			"pipeline": [
+				{
+				"$match": {
+					"$expr": {
+					"$eq": ["$_id", { "$toObjectId": "$$idrole" }]
+					}
+				}
+				}
+			],
+			"as": "role"
+			}
+		},
+		{ "$unwind": "$role" },
 
-  {
-    "$lookup": {
-      "from": "app",
-      "pipeline": [
-        { "$match": { "code": "` + appCode + `" } },
-        { "$sort": { "time": -1 } },
-        { "$limit": 1 }
-      ],
-      "as": "app"
-    }
-  },
+		{
+			"$lookup": {
+			"from": "app",
+			"pipeline": [
+				{ "$match": { "code": "` + appCode + `" } },
+				{ "$sort": { "time": -1 } },
+				{ "$limit": 1 }
+			],
+			"as": "app"
+			}
+		},
 
-  {
-    "$addFields": {
-      "app": { "$arrayElemAt": ["$app", 0] }
-    }
-  },
+		{
+			"$addFields": {
+			"app": { "$arrayElemAt": ["$app", 0] }
+			}
+		},
 
-  {
-    "$addFields": {
-      "menus": {
-        "$map": {
-          "input": {
-            "$filter": {
-              "input": { "$ifNull": ["$app.menus", []] },
-              "as": "m",
-              "cond": {
-                "$in": [
-                  "$$m._id",
-                  {
-                    "$map": {
-                      "input": "$role.accessmenu",
-                      "as": "am",
-                      "in": "$$am.idmenu"
-                    }
-                  }
-                ]
-              }
-            }
-          },
-          "as": "m",
-          "in": {
-            "$let": {
-              "vars": {
-                "access": {
-                  "$arrayElemAt": [
-                    {
-                      "$filter": {
-                        "input": "$role.accessmenu",
-                        "as": "am",
-                        "cond": { "$eq": ["$$am.idmenu", "$$m._id"] }
-                      }
-                    },
-                    0
-                  ]
-                }
-              },
-              "in": {
-                "_id": "$$m._id",
-                "name": "$$m.name",
-                "url": "$$m.url",
-                "icon": "$$m.icon",
-                "desc": "$$m.desc",
-                "create": "$$access.create",
-                "read": "$$access.read",
-                "update": "$$access.update",
-                "delete": "$$access.delete",
+		{
+			"$addFields": {
+			"menus": {
+				"$map": {
+				"input": {
+					"$filter": {
+					"input": { "$ifNull": ["$app.menus", []] },
+					"as": "m",
+					"cond": {
+						"$in": [
+						"$$m._id",
+						{
+							"$map": {
+							"input": { "$ifNull": ["$role.accessmenu", []] },
+							"as": "am",
+							"in": "$$am.idmenu"
+							}
+						}
+						]
+					}
+					}
+				},
+				"as": "m",
+				"in": {
+					"$let": {
+					"vars": {
+						"access": {
+						"$arrayElemAt": [
+							{
+							"$filter": {
+								"input": { "$ifNull": ["$role.accessmenu", []] },
+								"as": "am",
+								"cond": {
+								"$eq": ["$$am.idmenu", "$$m._id"]
+								}
+							}
+							},
+							0
+						]
+						}
+					},
+					"in": {
+						"_id": "$$m._id",
+						"name": "$$m.name",
+						"url": "$$m.url",
+						"icon": "$$m.icon",
+						"desc": "$$m.desc",
 
-                "submenu": {
-                  "$map": {
-                    "input": {
-                      "$filter": {
-                        "input": { "$ifNull": ["$$m.submenu", []] },
-                        "as": "sm",
-                        "cond": {
-                          "$in": [
-                            "$$sm._id",
-                            {
-                              "$map": {
-                                "input": { "$ifNull": ["$$access.accesssubmenu", []] },
-                                "as": "asm",
-                                "in": "$$asm.idsubmenu"
-                              }
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "as": "sm",
-                    "in": {
-                      "$let": {
-                        "vars": {
-                          "subAccess": {
-                            "$arrayElemAt": [
-                              {
-                                "$filter": {
-                                  "input": { "$ifNull": ["$$access.accesssubmenu", []] },
-                                  "as": "asm",
-                                  "cond": {
-                                    "$eq": ["$$asm.idsubmenu", "$$sm._id"]
-                                  }
-                                }
-                              },
-                              0
-                            ]
-                          }
-                        },
-                        "in": {
-                          "_id": "$$sm._id",
-                          "name": "$$sm.name",
-                          "url": "$$sm.url",
-                          "icon": "$$sm.icon",
-                          "desc": "$$sm.desc",
-                          "create": "$$subAccess.create",
-                          "read": "$$subAccess.read",
-                          "update": "$$subAccess.update",
-                          "delete": "$$subAccess.delete"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
+						"create": { "$ifNull": ["$$access.create", false] },
+						"read":   { "$ifNull": ["$$access.read", false] },
+						"update": { "$ifNull": ["$$access.update", false] },
+						"delete": { "$ifNull": ["$$access.delete", false] },
 
-  {
-    "$unset": [
-      "app.menus",
-      "role.accessmenu"
-    ]
-  }
-]
+						"submenu": {
+						"$map": {
+							"input": {
+							"$filter": {
+								"input": { "$ifNull": ["$$m.submenu", []] },
+								"as": "sm",
+								"cond": {
+								"$in": [
+									"$$sm._id",
+									{
+									"$map": {
+										"input": { "$ifNull": ["$$access.accesssubmenu", []] },
+										"as": "asm",
+										"in": "$$asm.idsubmenu"
+									}
+									}
+								]
+								}
+							}
+							},
+							"as": "sm",
+							"in": {
+							"$let": {
+								"vars": {
+								"subAccess": {
+									"$arrayElemAt": [
+									{
+										"$filter": {
+										"input": { "$ifNull": ["$$access.accesssubmenu", []] },
+										"as": "asm",
+										"cond": {
+											"$eq": ["$$asm.idsubmenu", "$$sm._id"]
+										}
+										}
+									},
+									0
+									]
+								}
+								},
+								"in": {
+								"_id": "$$sm._id",
+								"name": "$$sm.name",
+								"url": "$$sm.url",
+								"icon": "$$sm.icon",
+								"desc": "$$sm.desc",
 
-  `
+								"create": { "$ifNull": ["$$subAccess.create", false] },
+								"read":   { "$ifNull": ["$$subAccess.read", false] },
+								"update": { "$ifNull": ["$$subAccess.update", false] },
+								"delete": { "$ifNull": ["$$subAccess.delete", false] }
+								}
+							}
+							}
+						}
+						}
+					}
+					}
+				}
+				}
+			}
+			}
+		},
+
+		{
+			"$unset": [
+			"app.menus",
+			"role.accessmenu"
+			]
+		}
+	]
+	`
 
 	// print(pipeline)
 	res, err, code := AggregationOneUsingURI(GetURI(utils.GetMongoDBRoot()), consts.DB_CORE_NAME, consts.Coll_Users, pipeline)

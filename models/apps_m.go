@@ -17,6 +17,18 @@ type Menu struct {
 	Desc    string    `json:"desc"`
 	Submenu []Submenu `json:"submenu"`
 }
+type MenuForLogin struct {
+	Id      string            `json:"_id" validate:"required"`
+	Name    string            `json:"name" validate:"required"`
+	Url     string            `json:"url" validate:"required"`
+	Icon    string            `json:"icon"`
+	Desc    string            `json:"desc"`
+	Create  *bool             `json:"create" validate:"required"`
+	Read    *bool             `json:"read" validate:"required"`
+	Update  *bool             `json:"update" validate:"required"`
+	Delete  *bool             `json:"delete" validate:"required"`
+	Submenu []SubmenuForLogin `json:"submenu"`
+}
 type Submenu struct {
 	Id   string `json:"_id" validate:"required"`
 	Name string `json:"name" validate:"required"`
@@ -24,7 +36,17 @@ type Submenu struct {
 	Icon string `json:"icon"`
 	Desc string `json:"desc"`
 }
-
+type SubmenuForLogin struct {
+	Id     string `json:"_id" validate:"required"`
+	Name   string `json:"name" validate:"required"`
+	Url    string `json:"url"`
+	Icon   string `json:"icon"`
+	Desc   string `json:"desc"`
+	Create *bool  `json:"create" validate:"required"`
+	Read   *bool  `json:"read" validate:"required"`
+	Update *bool  `json:"update" validate:"required"`
+	Delete *bool  `json:"delete" validate:"required"`
+}
 type AccessMenu struct {
 	Idmenu        string          `json:"idmenu" validate:"required"`
 	AccessSubmenu []AccessSubmenu `json:"accesssubmenu" validate:"dive"`
