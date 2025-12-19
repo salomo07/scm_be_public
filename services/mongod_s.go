@@ -714,6 +714,7 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 				utils.ShowResponseJson(ctx, fasthttp.StatusOK, "success", models.LoginResponse{
 					Username:     securedUserData.Username,
 					IdUser:       config.EncryptAES(dataLogin.Id),
+					IdRole:       dataLogin.IdRole,
 					IdCompany:    dataLogin.IdCompany,
 					Fullname:     securedUserData.Name,
 					RoleName:     securedUserData.RoleName,

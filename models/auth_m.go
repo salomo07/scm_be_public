@@ -34,6 +34,8 @@ type LoginResponse struct {
 
 	IdUser string `json:"iduser"`
 
+	IdRole string `json:"idrole"`
+
 	Username string `json:"username"`
 
 	Fullname string `json:"fullname"`
