@@ -34,6 +34,8 @@ type LoginResponse struct {
 
 	IdUser string `json:"iduser"`
 
+	IdRole string `json:"idrole"`
+
 	Username string `json:"username"`
 
 	Fullname string `json:"fullname"`
@@ -54,10 +56,10 @@ type LoginResponse struct {
 	IsLogin bool `json:"islogin"`
 
 	// @description Indicates whether the system is under maintenance.
-	IsMaintenance bool    `json:"ismaintenance"`
-	Menus         []Menu  `json:"menus"`
-	AppInfo       AppInfo `json:"app"`
-	NeedShift     bool    `json:"needshiftsession"`
+	IsMaintenance bool           `json:"ismaintenance"`
+	Menus         []MenuForLogin `json:"menus"`
+	AppInfo       AppInfo        `json:"app"`
+	NeedShift     bool           `json:"needshiftsession"`
 }
 type LoginMenu struct {
 	Id      string         `json:"_id"`
