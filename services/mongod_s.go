@@ -488,170 +488,170 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 	appCode := os.Getenv("APP_CODE")
 	pipeline := `
 	[
-  {
-    "$match": {
-      "$or": [
-        { "username": "` + usernameDecrypted + `" },
-        { "contact.mobile": "` + config.DecryptAES(loginReq.Mobile) + `" }
-      ]
-    }
-  },
+		{
+			"$match": {
+			"$or": [
+				{ "username": "` + usernameDecrypted + `" },
+				{ "contact.mobile": "` + config.DecryptAES(loginReq.Mobile) + `" }
+			]
+			}
+		},
 
-  {
-    "$lookup": {
-      "from": "role",
-      "let": { "idrole": "$idrole" },
-      "pipeline": [
-        {
-          "$match": {
-            "$expr": {
-              "$eq": ["$_id", { "$toObjectId": "$$idrole" }]
-            }
-          }
-        }
-      ],
-      "as": "role"
-    }
-  },
-  { "$unwind": "$role" },
+		{
+			"$lookup": {
+			"from": "role",
+			"let": { "idrole": "$idrole" },
+			"pipeline": [
+				{
+				"$match": {
+					"$expr": {
+					"$eq": ["$_id", { "$toObjectId": "$$idrole" }]
+					}
+				}
+				}
+			],
+			"as": "role"
+			}
+		},
+		{ "$unwind": "$role" },
 
-  {
-    "$lookup": {
-      "from": "app",
-      "pipeline": [
-        { "$match": { "code": "` + appCode + `" } },
-        { "$sort": { "time": -1 } },
-        { "$limit": 1 }
-      ],
-      "as": "app"
-    }
-  },
+		{
+			"$lookup": {
+			"from": "app",
+			"pipeline": [
+				{ "$match": { "code": "` + appCode + `" } },
+				{ "$sort": { "time": -1 } },
+				{ "$limit": 1 }
+			],
+			"as": "app"
+			}
+		},
 
-  {
-    "$addFields": {
-      "app": { "$arrayElemAt": ["$app", 0] }
-    }
-  },
+		{
+			"$addFields": {
+			"app": { "$arrayElemAt": ["$app", 0] }
+			}
+		},
 
-  {
-    "$addFields": {
-      "menus": {
-        "$map": {
-          "input": {
-            "$filter": {
-              "input": { "$ifNull": ["$app.menus", []] },
-              "as": "m",
-              "cond": {
-                "$in": [
-                  "$$m._id",
-                  {
-                    "$map": {
-                      "input": "$role.accessmenu",
-                      "as": "am",
-                      "in": "$$am.idmenu"
-                    }
-                  }
-                ]
-              }
-            }
-          },
-          "as": "m",
-          "in": {
-            "$let": {
-              "vars": {
-                "access": {
-                  "$arrayElemAt": [
-                    {
-                      "$filter": {
-                        "input": "$role.accessmenu",
-                        "as": "am",
-                        "cond": { "$eq": ["$$am.idmenu", "$$m._id"] }
-                      }
-                    },
-                    0
-                  ]
-                }
-              },
-              "in": {
-                "_id": "$$m._id",
-                "name": "$$m.name",
-                "url": "$$m.url",
-                "icon": "$$m.icon",
-                "desc": "$$m.desc",
-                "create": "$$access.create",
-                "read": "$$access.read",
-                "update": "$$access.update",
-                "delete": "$$access.delete",
+		{
+			"$addFields": {
+			"menus": {
+				"$map": {
+				"input": {
+					"$filter": {
+					"input": { "$ifNull": ["$app.menus", []] },
+					"as": "m",
+					"cond": {
+						"$in": [
+						"$$m._id",
+						{
+							"$map": {
+							"input": "$role.accessmenu",
+							"as": "am",
+							"in": "$$am.idmenu"
+							}
+						}
+						]
+					}
+					}
+				},
+				"as": "m",
+				"in": {
+					"$let": {
+					"vars": {
+						"access": {
+						"$arrayElemAt": [
+							{
+							"$filter": {
+								"input": "$role.accessmenu",
+								"as": "am",
+								"cond": { "$eq": ["$$am.idmenu", "$$m._id"] }
+							}
+							},
+							0
+						]
+						}
+					},
+					"in": {
+						"_id": "$$m._id",
+						"name": "$$m.name",
+						"url": "$$m.url",
+						"icon": "$$m.icon",
+						"desc": "$$m.desc",
+						"create": "$$access.create",
+						"read": "$$access.read",
+						"update": "$$access.update",
+						"delete": "$$access.delete",
 
-                "submenu": {
-                  "$map": {
-                    "input": {
-                      "$filter": {
-                        "input": { "$ifNull": ["$$m.submenu", []] },
-                        "as": "sm",
-                        "cond": {
-                          "$in": [
-                            "$$sm._id",
-                            {
-                              "$map": {
-                                "input": { "$ifNull": ["$$access.accesssubmenu", []] },
-                                "as": "asm",
-                                "in": "$$asm.idsubmenu"
-                              }
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "as": "sm",
-                    "in": {
-                      "$let": {
-                        "vars": {
-                          "subAccess": {
-                            "$arrayElemAt": [
-                              {
-                                "$filter": {
-                                  "input": { "$ifNull": ["$$access.accesssubmenu", []] },
-                                  "as": "asm",
-                                  "cond": {
-                                    "$eq": ["$$asm.idsubmenu", "$$sm._id"]
-                                  }
-                                }
-                              },
-                              0
-                            ]
-                          }
-                        },
-                        "in": {
-                          "_id": "$$sm._id",
-                          "name": "$$sm.name",
-                          "url": "$$sm.url",
-                          "icon": "$$sm.icon",
-                          "desc": "$$sm.desc",
-                          "create": "$$subAccess.create",
-                          "read": "$$subAccess.read",
-                          "update": "$$subAccess.update",
-                          "delete": "$$subAccess.delete"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
+						"submenu": {
+						"$map": {
+							"input": {
+							"$filter": {
+								"input": { "$ifNull": ["$$m.submenu", []] },
+								"as": "sm",
+								"cond": {
+								"$in": [
+									"$$sm._id",
+									{
+									"$map": {
+										"input": { "$ifNull": ["$$access.accesssubmenu", []] },
+										"as": "asm",
+										"in": "$$asm.idsubmenu"
+									}
+									}
+								]
+								}
+							}
+							},
+							"as": "sm",
+							"in": {
+							"$let": {
+								"vars": {
+								"subAccess": {
+									"$arrayElemAt": [
+									{
+										"$filter": {
+										"input": { "$ifNull": ["$$access.accesssubmenu", []] },
+										"as": "asm",
+										"cond": {
+											"$eq": ["$$asm.idsubmenu", "$$sm._id"]
+										}
+										}
+									},
+									0
+									]
+								}
+								},
+								"in": {
+								"_id": "$$sm._id",
+								"name": "$$sm.name",
+								"url": "$$sm.url",
+								"icon": "$$sm.icon",
+								"desc": "$$sm.desc",
+								"create": "$$subAccess.create",
+								"read": "$$subAccess.read",
+								"update": "$$subAccess.update",
+								"delete": "$$subAccess.delete"
+								}
+							}
+							}
+						}
+						}
+					}
+					}
+				}
+				}
+			}
+			}
+		},
 
-  {
-    "$unset": [
-      "app.menus",
-      "role.accessmenu"
-    ]
-  }
-]
+		{
+			"$unset": [
+			"app.menus",
+			"role.accessmenu"
+			]
+		}
+		]
 
   `
 
@@ -673,14 +673,17 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 			var dataLogin models.LoginFromDB
 			utils.JsonToStruct(res, &dataLogin)
 			if config.DecryptAES(loginReq.Password) == config.DecryptAES(config.DecryptAES(dataLogin.Password)) {
+
 				hours := 4
 				if loginReq.Duration > 0 && loginReq.Duration < (24*7) {
 					hours = loginReq.Duration
 				} else if loginReq.RememberPassword {
 					hours = 24 * 7
 				}
-				expTime := time.Now().Local().Add(time.Duration(hours) * time.Hour).Unix()
-				expTime1Day := time.Now().Local().Add(time.Duration(24) * time.Hour).Unix()
+
+				expTime := time.Now().UTC().Add(time.Duration(hours) * time.Hour)
+				expTime1Day := time.Now().UTC().Add(24 * time.Hour)
+
 				securedUserData := models.LoginResponseJWT{
 					AppId:     os.Getenv("APP_ID"),
 					Id:        dataLogin.Id,
@@ -693,20 +696,32 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 					RoleName:  dataLogin.Role.Name,
 					RoleType:  dataLogin.Role.Type,
 				}
-				jwt := utils.GenerateJWT(securedUserData, expTime)
-				jwt1Day := utils.GenerateJWT(securedUserData, expTime1Day)
-				// go func() {
-				// 	go services.SaveValueRedis("cred_"+userData.IdCompany, `{"cred":"`+UserCompany.Company.Cred+`","nonce":"`+UserCompany.Company.Nonce+`"}`, strconv.FormatInt(expTime, 10))
-				// }()
-				SaveValueRedis("cred_"+dataLogin.IdCompany, `{"cred":"`+dataLogin.Company.Cred+`","nonce":"`+dataLogin.Company.Nonce+`"}`, strconv.FormatInt(expTime1Day, 10))
 
-				GetMongoPool(config.EncodingBase64(dataLogin.IdCompany), GetURI(models.CredDB{DBName: dataLogin.Company.IdCompany, User: dataLogin.IdCompany, Pass: config.EncryptAES(dataLogin.Company.IdCompany), Nonce: dataLogin.Company.Nonce}))
-				// accessmenu,err := GetAccessMenuForLoginResponse(ctx, userData.IdCompany, userData.IdRole)
+				jwt := utils.GenerateJWT(securedUserData, expTime.Unix())
+				jwt1Day := utils.GenerateJWT(securedUserData, expTime1Day.Unix())
 
-				// go services.SaveValueRedis(userData.Username, jwt, strconv.FormatInt(expTime, 10))
+				SaveValueRedis(
+					"cred_"+dataLogin.IdCompany,
+					`{"cred":"`+dataLogin.Company.Cred+`","nonce":"`+dataLogin.Company.Nonce+`"}`,
+					strconv.FormatInt(expTime1Day.Unix(), 10),
+				)
 
-				go SaveValueRedis(dataLogin.Username+"_refreshtoken", jwt1Day, strconv.FormatInt(expTime1Day, 10))
-				print(res)
+				GetMongoPool(
+					config.EncodingBase64(dataLogin.IdCompany),
+					GetURI(models.CredDB{
+						DBName: dataLogin.Company.IdCompany,
+						User:   dataLogin.IdCompany,
+						Pass:   config.EncryptAES(dataLogin.Company.IdCompany),
+						Nonce:  dataLogin.Company.Nonce,
+					}),
+				)
+
+				go SaveValueRedis(
+					dataLogin.Username+"_refreshtoken",
+					jwt1Day,
+					strconv.FormatInt(expTime1Day.Unix(), 10),
+				)
+
 				utils.ShowResponseJson(ctx, fasthttp.StatusOK, "success", models.LoginResponse{
 					Username:     securedUserData.Username,
 					IdUser:       config.EncryptAES(dataLogin.Id),
@@ -716,9 +731,11 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 					RoleType:     securedUserData.RoleType,
 					Token:        jwt,
 					RefreshToken: jwt1Day,
-					Expired:      time.Unix(expTime1Day, 0).String(),
-					Menus:        dataLogin.Menus,
-					AppInfo:      dataLogin.AppInfo,
+
+					Expired: expTime.Format("2006-01-02T15:04:05Z"),
+
+					Menus:   dataLogin.Menus,
+					AppInfo: dataLogin.AppInfo,
 				})
 			} else {
 				utils.ShowResponseDefault(ctx, fasthttp.StatusUnauthorized, consts.PasswordIncorrect, "")

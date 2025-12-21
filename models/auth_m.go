@@ -57,6 +57,7 @@ type LoginResponse struct {
 	IsMaintenance bool    `json:"ismaintenance"`
 	Menus         []Menu  `json:"menus"`
 	AppInfo       AppInfo `json:"app"`
+	NeedShift     bool    `json:"needshiftsession"`
 }
 type LoginMenu struct {
 	Id      string         `json:"_id"`

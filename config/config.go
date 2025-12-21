@@ -12,16 +12,21 @@ import (
 	"os"
 	"scm/consts"
 
+	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/crypto/chacha20poly1305"
 )
 
 func init() {
-	// er := godotenv.Load()
-	// if er != nil {
-	// 	print(er.Error())
-	// 	panic("Fail to load .env file")
-	// }
+	isLocal := false
+	if isLocal {
+		er := godotenv.Load()
+		if er != nil {
+			print(er.Error())
+			panic("Fail to load .env file")
+		}
+	}
+
 	consts.APP_ID = os.Getenv("APP_ID")
 	consts.ISSUER_ID = os.Getenv("ISSUER_ID")
 }
@@ -119,6 +124,7 @@ func DecryptChacha20poly1305(encrypted, nonce string) (resStr string, errStr str
 func GetCredRedis() string {
 	if consts.UsingRedisOnline {
 		return os.Getenv("REDIS_CRED_DEV")
+		//os.Getenv("REDIS_CRED_DEV")
 	} else {
 		return os.Getenv("REDIS_CRED_ADMIN_LOCAL")
 	}
