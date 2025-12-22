@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"os"
-	"scm/config"
 	"scm/routers"
 	"scm/utils"
 	"time"
@@ -17,7 +16,6 @@ import (
 var app_port = os.Getenv("APP_PORT")
 
 func main() {
-	print(config.EncryptAES(config.EncryptAES("010192")))
 	utils.GenerateSuperAdminToken()
 
 	router := fasthttprouter.New()
@@ -52,7 +50,7 @@ func main() {
 	}
 
 	if app_port == "" {
-		app_port = "8080"
+		app_port = "7777"
 	}
 
 	// ✅ Chain middlewares TANPA compression dulu

@@ -18,7 +18,7 @@ import (
 )
 
 func init() {
-	isLocal := false
+	isLocal := true
 	if isLocal {
 		er := godotenv.Load()
 		if er != nil {
@@ -26,7 +26,7 @@ func init() {
 			panic("Fail to load .env file")
 		}
 	}
-
+	// log.Println(DecryptAES(DecryptAES("nfSajo0XBmYbURO/BbdqEiNs1qGgPay04OeT6p+SWVghcj1bmDd4hxyVS6Q0YgJeWQo3NVs4hNaQOzyHfDjiTV/nwoZqhLzi986yvAn39U9yrhAYk/pfGg==")))
 	consts.APP_ID = os.Getenv("APP_ID")
 	consts.ISSUER_ID = os.Getenv("ISSUER_ID")
 }
