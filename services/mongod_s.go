@@ -484,7 +484,6 @@ func FindOneRootDBUsingURI(uri string, dbname string, collectionName string, que
 }
 
 func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq models.LoginRequest) {
-	// pipeline := `[{"$match":{"$or":[{"username":"` + usernameDecrypted + `"},{"contact.mobile":"` + config.DecryptAES(loginReq.Mobile) + `"}]}},{"$lookup":{"from":"` + consts.Coll_Companies + `","localField":"idcompany","foreignField":"_id","as":"company"}},{"$unwind":{"path":"$company","preserveNullAndEmptyArrays":true}}]`
 	appCode := os.Getenv("APP_CODE")
 	pipeline := `
 	[
@@ -726,13 +725,13 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 					Username:     securedUserData.Username,
 					IdUser:       config.EncryptAES(dataLogin.Id),
 					IdCompany:    dataLogin.IdCompany,
-					Fullname:     securedUserData.Name,
+					Name:         securedUserData.Name,
 					RoleName:     securedUserData.RoleName,
 					RoleType:     securedUserData.RoleType,
 					Token:        jwt,
 					RefreshToken: jwt1Day,
-
-					Expired: expTime.Format("2006-01-02T15:04:05Z"),
+					ProfileFoto:  dataLogin.ProfileFoto,
+					Expired:      expTime.Format("2006-01-02T15:04:05Z"),
 
 					Menus:   dataLogin.Menus,
 					AppInfo: dataLogin.AppInfo,

@@ -38,11 +38,13 @@ type LoginResponse struct {
 
 	Username string `json:"username"`
 
-	Fullname string `json:"fullname"`
+	Name string `json:"name"`
 
 	RoleName string `json:"rolename"`
 
 	RoleType string `json:"roletype"`
+
+	ProfileFoto string `json:"profile_foto"`
 
 	// @description The token generated for the user after login.
 	Token string `json:"token"`
