@@ -59,8 +59,10 @@ type LoginResponse struct {
 
 	// @description Indicates whether the system is under maintenance.
 	IsMaintenance bool           `json:"ismaintenance"`
+	Pin           string         `json:"pin"`
 	Menus         []MenuForLogin `json:"menus"`
 	AppInfo       AppInfo        `json:"app"`
+	Contact       Contact        `json:"contact"`
 	NeedShift     bool           `json:"needshiftsession"`
 }
 type LoginMenu struct {

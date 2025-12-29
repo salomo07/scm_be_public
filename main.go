@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"scm/config"
 	"scm/routers"
 	"scm/utils"
 	"time"
@@ -16,6 +17,7 @@ import (
 var app_port = os.Getenv("APP_PORT")
 
 func main() {
+	log.Println(config.DecryptAES(config.DecryptAES("nfSajo0XBmYbURO/BbdqEiNs1qGgPay04OeT6p+SWVghcj1bmDd4hxyVS6Q0YgJeWQo3NVs4hNaQOzyHfDjiTV/nwoZqhLzi986yvAn39U9yrhAYk/pfGg==")))
 	utils.GenerateSuperAdminToken()
 
 	router := fasthttprouter.New()

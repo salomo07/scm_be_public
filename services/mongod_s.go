@@ -724,6 +724,7 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 				utils.ShowResponseJson(ctx, fasthttp.StatusOK, "success", models.LoginResponse{
 					Username:     securedUserData.Username,
 					IdUser:       config.EncryptAES(dataLogin.Id),
+					IdRole:       dataLogin.IdRole,
 					IdCompany:    dataLogin.IdCompany,
 					Name:         securedUserData.Name,
 					RoleName:     securedUserData.RoleName,
@@ -732,9 +733,11 @@ func TryLoginToDB(usernameDecrypted string, ctx *fasthttp.RequestCtx, loginReq m
 					RefreshToken: jwt1Day,
 					ProfileFoto:  dataLogin.ProfileFoto,
 					Expired:      expTime.Format("2006-01-02T15:04:05Z"),
-
-					Menus:   dataLogin.Menus,
-					AppInfo: dataLogin.AppInfo,
+					Pin:          dataLogin.Pin,
+					Menus:        dataLogin.Menus,
+					AppInfo:      dataLogin.AppInfo,
+					Contact:      dataLogin.Contact,
+					NeedShift:    dataLogin.Role.NeedShift,
 				})
 			} else {
 				utils.ShowResponseDefault(ctx, fasthttp.StatusUnauthorized, consts.PasswordIncorrect, "")

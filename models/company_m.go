@@ -18,6 +18,7 @@ type Role struct {
 	Type       string       `json:"type" validate:"required"`
 	Desc       string       `json:"desc"`
 	AccessMenu []AccessMenu `json:"accessmenu"`
+	NeedShift  bool         `json:"needshiftsession"`
 }
 type Contact struct {
 	Email    string `json:"email"` //Harus encrypt  di DB

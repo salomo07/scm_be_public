@@ -1,9 +1,11 @@
 package admin
 
 import (
+	"scm/config"
 	"scm/consts"
 	"scm/controllers"
 	"scm/controllers/master_controller"
+	"scm/models"
 	"scm/utils"
 
 	"github.com/buaazp/fasthttprouter"
@@ -18,11 +20,14 @@ func UserRouters(router *fasthttprouter.Router) {
 
 	router.POST(consts.URL_User_Find, func(ctx *fasthttp.RequestCtx) {
 		ctx.Response.Header.Set("Content-Type", "application/json")
-		_, err, isSuperAdmin, isCompanyAdmin := controllers.CheckSession(ctx)
+		usr, err, isSuperAdmin, isCompanyAdmin := controllers.CheckSession(ctx)
+		var companyModel models.LoginRequest
+		utils.JsonToStruct(string(ctx.Request.Body()), &companyModel)
+
 		if err != "" {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusInternalServerError, "error", err)
 			return
-		} else if isSuperAdmin || isCompanyAdmin {
+		} else if isSuperAdmin || isCompanyAdmin || config.DecodingBase64(usr.IdCompany) == companyModel.IdCompany {
 			master_controller.FindUsers(ctx)
 		} else {
 			utils.ShowResponseDefault(ctx, fasthttp.StatusUnauthorized, "warning", consts.Unauthorized)
