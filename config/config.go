@@ -18,7 +18,7 @@ import (
 )
 
 func init() {
-	isLocal := true
+	isLocal := false
 	if isLocal {
 		er := godotenv.Load()
 		if er != nil {
