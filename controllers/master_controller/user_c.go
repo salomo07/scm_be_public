@@ -17,10 +17,24 @@ func FindUsers(ctx *fasthttp.RequestCtx) {
 		utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, "warning", consts.EmptyBody)
 		return
 	}
-	queryFindRole := string(ctx.Request.Body())
+	type Req struct {
+		IdCompany string `json:"idcompany"`
+		Secured   bool   `json:"secured"`
+	}
+	type Query struct {
+		IdCompany string `json:"idcompany"`
+	}
+	// queryFindUser := string(ctx.Request.Body())
+	var reqModel Req
+	var queryModel Query
+	utils.JsonToStruct(string(ctx.Request.Body()), &reqModel)
+	utils.JsonToStruct(string(ctx.Request.Body()), &queryModel)
 	credRootDB := utils.GetMongoDBRoot()
 	sort, skip, limit := controllers.GetSortSkipLimit(ctx)
-	resFindMany, err, code := services.FindManyRootDBUsingURI(services.GetURI(credRootDB), consts.DB_CORE_NAME, consts.Coll_Users, queryFindRole, "", sort, skip, limit)
+	resFindMany, err, code := services.FindManyRootDBUsingURI(services.GetURI(credRootDB), consts.DB_CORE_NAME, consts.Coll_Users, utils.StructToJson(queryModel), "", sort, skip, limit)
+	if reqModel.Secured {
+		resFindMany, err, code = services.FindManyRootDBUsingURI(services.GetURI(credRootDB), consts.DB_CORE_NAME, consts.Coll_Users, utils.StructToJson(queryModel), `{"password":0,"pin":0,"nik":0}`, sort, skip, limit)
+	}
 	if err != "" {
 		utils.ShowResponseDefault(ctx, code, "error", err)
 	} else {

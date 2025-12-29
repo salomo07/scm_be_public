@@ -38,6 +38,134 @@ func FindManyAccessMenu(ctx *fasthttp.RequestCtx, user models.User) {
 	utils.ShowResponseJson(ctx, code, "success", res)
 }
 
+// func AddAccessMenuBulk(ctx *fasthttp.RequestCtx, user models.User) {
+// 	if string(ctx.Request.Body()) == "" {
+// 		utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, "warning", consts.EmptyBody)
+// 		return
+// 	}
+// 	type AccessMenuModified struct {
+// 		Id            string                 `json:"_id" validate:"required"`
+// 		IdRole        string                 `json:"idrole" validate:"required"`
+// 		Idmenu        string                 `json:"idmenu" validate:"required"`
+// 		AccessSubmenu []models.AccessSubmenu `json:"accesssubmenu" validate:"dive"`
+// 		Create        *bool                  `json:"create" validate:"required"`
+// 		Read          *bool                  `json:"read" validate:"required"`
+// 		Update        *bool                  `json:"update" validate:"required"`
+// 		Delete        *bool                  `json:"delete" validate:"required"`
+// 		Error         string                 `json:"error" validate:"required"`
+// 	}
+// 	var accessModelBulk []models.AccessMenu
+// 	var accessModelInvalid []AccessMenuModified = nil
+// 	i := 0
+// 	utils.JsonToStruct(string(ctx.PostBody()), &accessModelBulk)
+// 	for _, value := range accessModelBulk {
+// 		var accessmenumodified AccessMenuModified
+// 		value.Id = "a_" + strconv.FormatInt(time.Now().UnixNano()/1000, 10)
+// 		utils.JsonToStruct(utils.StructToJson(value), &accessmenumodified)
+// 		err := utils.ValidateRequiredFieldsOld(value)
+// 		if err != "" {
+// 			accessmenumodified.Error = err
+// 			accessModelInvalid = append(accessModelInvalid, accessmenumodified)
+// 		} else {
+// 			res, err, _ := services.FindOne(user.IdCompany, consts.Coll_AccessMenu, `{"idrole":"`+value.IdRole+`","idmenu":"`+value.Idmenu+`"}`, "", ``)
+// 			if err != "" {
+// 				accessmenumodified.Error = err
+// 				accessModelInvalid = append(accessModelInvalid, accessmenumodified)
+// 			} else {
+// 				if res == "" {
+// 					_, err, _ := services.InsertOne(user.IdCompany, consts.Coll_AccessMenu, utils.StructToJson(value))
+// 					if err == "" {
+// 						i = i + 1
+// 					} else {
+// 						accessmenumodified.Error = err
+// 						accessModelInvalid = append(accessModelInvalid, accessmenumodified)
+// 					}
+// 				} else {
+// 					accessmenumodified.Error = consts.AccessMenuExist
+// 					accessModelInvalid = append(accessModelInvalid, accessmenumodified)
+// 				}
+// 			}
+// 		}
+// 	}
+// 	utils.ShowResponseJson(ctx, fasthttp.StatusOK, "success", accessModelInvalid)
+// }
+// func AddAccessMenu(ctx *fasthttp.RequestCtx, user models.User) {
+// 	if string(ctx.Request.Body()) == "" {
+// 		utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, "warning", consts.EmptyBody)
+// 		return
+// 	}
+// 	var accessModel models.AccessMenu
+// 	utils.JsonToStruct(string(ctx.PostBody()), &accessModel)
+// 	// accessModel.Id = "a_" + strconv.FormatInt(time.Now().UnixNano()/1000, 10)
+// 	err := utils.ValidateRequiredFieldsOld(accessModel)
+// 	if err != "" {
+// 		utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, "error", err)
+// 	} else {
+// 		res, err, _ := services.FindOne(user.IdCompany, consts.Coll_AccessMenu, `{"idmenu":"`+accessModel.Idmenu+`"}`, "", "")
+// 		if err != "" {
+// 			utils.ShowResponseDefault(ctx, fasthttp.StatusInternalServerError, "error", err)
+// 			return
+// 		} else {
+// 			if res == "" {
+// 				_, err, _ := services.InsertOne(user.IdCompany, consts.Coll_AccessMenu, utils.StructToJson(accessModel))
+// 				if err == "" {
+// 					utils.ShowResponseDefault(ctx, fasthttp.StatusOK, "success", consts.AccessMenuAdd)
+// 				} else {
+// 					utils.ShowResponseDefault(ctx, fasthttp.StatusInternalServerError, "error", consts.FailAddAccessMenu)
+// 				}
+// 			} else {
+// 				utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, "warning", consts.AccessMenuExist)
+// 			}
+// 		}
+// 	}
+// }
+// func UpdateAccessMenu(ctx *fasthttp.RequestCtx, user models.User) {
+// 	if string(ctx.Request.Body()) == "" {
+// 		utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, "warning", consts.EmptyBody)
+// 		return
+// 	}
+// 	var accessModel models.AccessMenu
+// 	utils.JsonToStruct(string(ctx.PostBody()), &accessModel)
+// 	// accessModel.Id = "a_" + strconv.FormatInt(time.Now().UnixNano()/1000, 10)
+// 	err := utils.ValidateRequiredFields(accessModel)
+// 	if err != "" {
+// 		utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, "error", err)
+// 	} else {
+// 		tempData := utils.RemoveField(accessModel, "_id")
+// 		queryUpdateAccessMenu := `{"idmenu":"` + accessModel.Idmenu + `"}`
+// 		res, err, _ := services.UpdateOne(user.IdCompany, consts.Coll_AccessMenu, queryUpdateAccessMenu, utils.StructToJson(tempData), false)
+// 		if err != "" {
+// 			utils.ShowResponseDefault(ctx, fasthttp.StatusInternalServerError, "error", err)
+// 			return
+// 		} else {
+// 			utils.ShowResponseJson(ctx, fasthttp.StatusOK, "success", res)
+// 			return
+// 		}
+// 	}
+// }
+
+// func DeleteAccessMenu(ctx *fasthttp.RequestCtx, user models.User) {
+// 	if string(ctx.Request.Body()) == "" {
+// 		utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, "warning", consts.EmptyBody)
+// 		return
+// 	}
+// 	var accessModel models.AccessMenu
+// 	utils.JsonToStruct(string(ctx.PostBody()), &accessModel)
+
+// 	if accessModel.Id != "" {
+// 		res, err, _ := services.DeleteOne(user.IdCompany, consts.Coll_AccessMenu, `{"_id":"`+accessModel.Id+`"}`)
+// 		if err != "" {
+// 			utils.ShowResponseDefault(ctx, fasthttp.StatusInternalServerError, "error", err)
+// 			return
+// 		} else {
+// 			utils.ShowResponseJson(ctx, fasthttp.StatusOK, "success", res)
+// 			return
+// 		}
+// 	} else {
+// 		utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, "error", consts.AccessDeleteMandatory)
+// 	}
+// }
+
 func AddMenu(ctx *fasthttp.RequestCtx, user models.User) {
 	if string(ctx.Request.Body()) == "" {
 		utils.ShowResponseDefault(ctx, fasthttp.StatusBadRequest, "warning", consts.EmptyBody)
